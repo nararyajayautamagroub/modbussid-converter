@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+import zipfile
 from pathlib import Path
 
 from PIL import Image, UnidentifiedImageError
+
+
+SUPPORTED_IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tga"}
 
 
 def inspect_image(path: Path) -> dict:
@@ -25,7 +29,7 @@ def inspect_image(path: Path) -> dict:
         raise ValueError("File bukan image yang didukung Pillow.") from exc
 
 
-def create_spritesheet(
+def extract_sprites(
     source: Path,
     destination: Path,
     columns: int,
@@ -46,10 +50,27 @@ def create_spritesheet(
             if frame_width < 1 or frame_height < 1:
                 raise ValueError("Grid lebih besar daripada ukuran image.")
 
-            cropped = image.crop(
-                (0, 0, frame_width * columns, frame_height * rows)
-            )
-            cropped.save(destination, format="PNG")
+            with zipfile.ZipFile(
+                destination,
+                "w",
+                compression=zipfile.ZIP_DEFLATED,
+                compresslevel=9,
+            ) as archive:
+                frame_number = 0
+                for row in range(rows):
+                    for column in range(columns):
+                        left = column * frame_width
+                        top = row * frame_height
+                        frame = image.crop(
+                            (left, top, left + frame_width, top + frame_height)
+                        )
+                        name = f"frame_{frame_number:04d}.png"
+                        from io import BytesIO
+
+                        buffer = BytesIO()
+                        frame.save(buffer, format="PNG")
+                        archive.writestr(name, buffer.getvalue())
+                        frame_number += 1
     except (OSError, UnidentifiedImageError) as exc:
         raise ValueError("Source bukan image yang dapat diproses.") from exc
 
