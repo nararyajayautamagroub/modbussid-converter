@@ -8,6 +8,7 @@ from fastapi.responses import FileResponse
 
 from shared.asset_export import export_found_asset
 from shared.asset_inspector import inspect_archive, inspect_file
+from shared.asset_inspector import sha256
 from shared.path_security import ROOT, safe_repo_file
 from shared.roblox_url import asset_id_from_url, download_asset
 
@@ -72,7 +73,7 @@ def inspect(path: str):
 @router.get("/export")
 def export(path: str, selected: list[str] | None = None):
     source = safe_repo_file(path)
-    output = GENERATED / f"{source.stem}_export.zip"
+    output = GENERATED / f"{source.stem}_{sha256(source)[:10]}_export.zip"
     try:
         export_found_asset(source, output, selected)
     except (OSError, ValueError) as exc:
