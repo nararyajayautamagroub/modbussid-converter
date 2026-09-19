@@ -1,1 +1,12 @@
-__pycache__/\n*.py[cod]\n.venv/\n.env\n*.log\noutput/\nuploads/\nreports/\n
+__pycache__/
+*.py[cod]
+.venv/
+.env
+*.log
+output/
+uploads/
+reports/
+web/generated/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
