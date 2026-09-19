@@ -3,120 +3,239 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#16a34a">
 <title>Game Mod Asset Lab</title>
 <style>
-:root{font-family:system-ui,sans-serif;background:#0f1115;color:#eee}
-body{max-width:1100px;margin:auto;padding:24px}
-section{border:1px solid #30343b;padding:18px;margin:14px 0;border-radius:14px;background:#171a21}
-input,button{padding:10px;margin:4px;border-radius:8px;border:1px solid #3b414b;background:#0f1115;color:#eee}
+:root{
+  --green:#16a34a;
+  --green-dark:#15803d;
+  --green-soft:#dcfce7;
+  --border:#d1d5db;
+  --text:#17202a;
+  --muted:#667085;
+  --surface:#ffffff;
+  --surface-soft:#f6f8f7;
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--text);
+  background:#fff
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#fff;color:var(--text)}
+button,input{font:inherit}
 button{cursor:pointer}
-a{color:#7dd3fc}
-pre{white-space:pre-wrap;overflow:auto}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
-.card{padding:12px;border:1px solid #30343b;border-radius:10px}
-small{color:#a5adba}
+a{color:var(--green-dark);text-decoration:none}
+a:hover{text-decoration:underline}
+.topbar{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;padding:12px 20px;border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,.96);backdrop-filter:blur(10px)
+}
+.brand{font-weight:800;letter-spacing:.2px}
+.menu-button{
+  width:44px;height:44px;border:0;border-radius:10px;
+  background:var(--green);color:#fff;font-size:26px;font-weight:800
+}
+.menu-button:hover{background:var(--green-dark)}
+.layout{max-width:1200px;margin:auto;padding:24px 20px 60px}
+.drawer{
+  position:fixed;top:69px;right:18px;z-index:90;width:min(290px,calc(100vw - 36px));
+  background:#fff;border:1px solid var(--border);border-radius:14px;
+  box-shadow:0 18px 40px rgba(15,23,42,.15);padding:10px;
+  opacity:0;transform:translateY(-8px);pointer-events:none;transition:.18s ease
+}
+.drawer.open{opacity:1;transform:translateY(0);pointer-events:auto}
+.drawer a{
+  display:block;padding:12px 14px;border-radius:10px;color:var(--text);font-weight:700
+}
+.drawer a:hover{background:var(--green-soft);text-decoration:none}
+.hero{padding:12px 0 6px}
+.hero h1{margin:0 0 8px;font-size:clamp(30px,5vw,46px)}
+.hero p{margin:0;color:var(--muted)}
+section{
+  border:1px solid var(--border);border-radius:16px;background:var(--surface);
+  padding:20px;margin:16px 0;box-shadow:0 5px 20px rgba(15,23,42,.05)
+}
+section h2{margin-top:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.card{padding:15px;border:1px solid var(--border);border-radius:12px;background:var(--surface-soft)}
+.card h3{margin-top:0}
+input{
+  padding:11px 12px;border:1px solid var(--border);border-radius:10px;
+  background:#fff;color:var(--text);min-width:0
+}
+input:focus{outline:3px solid rgba(22,163,74,.18);border-color:var(--green)}
+button.action{
+  padding:11px 14px;border:0;border-radius:10px;background:var(--green);
+  color:#fff;font-weight:800
+}
+button.action:hover{background:var(--green-dark)}
+button.secondary{
+  padding:11px 14px;border:1px solid var(--green);border-radius:10px;
+  background:#fff;color:var(--green-dark);font-weight:800
+}
+button.secondary:hover{background:var(--green-soft)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.entry-list{max-height:320px;overflow:auto;margin:12px 0;padding:8px;border:1px solid var(--border);border-radius:10px}
+.entry-list label{display:block;padding:8px;border-radius:8px}
+.entry-list label:hover{background:var(--surface-soft)}
+pre{
+  white-space:pre-wrap;overflow:auto;background:#f8faf9;border:1px solid var(--border);
+  border-radius:10px;padding:12px
+}
+.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:var(--green-soft);color:var(--green-dark);font-weight:800;font-size:12px}
+.status{color:var(--muted)}
+.footer{text-align:center;color:var(--muted);padding:30px 0}
+@media (max-width:640px){
+  .layout{padding:18px 14px 40px}
+  section{padding:16px}
+  .topbar{padding:10px 14px}
+}
 </style>
 </head>
 <body>
-<h1>Game Mod Asset Lab</h1>
-<p>Inspect → cari asset → klasifikasi → export → download. Data katalog terhubung ke repository lokal + GitHub.</p>
+<header class="topbar">
+  <div class="brand">Game Mod Asset Lab</div>
+  <button class="menu-button" id="menuButton" aria-label="Buka menu" aria-expanded="false" aria-controls="menu">=</button>
+</header>
 
-<section>
-<h2>Upload & Inspect</h2>
-<input id="file" type="file">
-<button onclick="uploadAsset()">Upload</button>
-<button onclick="inspectUploaded()">Inspect</button>
-<pre id="uploadResult">Belum ada file.</pre><div id="entries"></div><button onclick="exportSelected()">Export Selected</button><pre id="exportResult"></pre>
-</section>
+<nav class="drawer" id="menu" aria-label="Menu utama">
+  <a href="#inspect">Upload & Inspect</a>
+  <a href="#templates">Template</a>
+  <a href="#repository">Repository</a>
+  <a href="#roblox">Roblox URL</a>
+  <a href="#sprites">Sprite Sheet</a>
+  <a href="#lights">Animasi Lampu</a>
+</nav>
 
-<section>
-<h2>Template</h2>
-<div class="grid">
-<div class="card"><b>AO</b><br><small>Ambient Occlusion</small></div>
-<div class="card"><b>Texture</b><br><small>Texture umum</small></div>
-<div class="card"><b>Kaca/XOR</b><br><small>Template kaca / glass</small></div>
-</div>
-<input id="templatePath" placeholder="uploads/nama-file.png" style="width:min(720px,90%)">
-<button onclick="classifyTemplate()">Classify</button>
-<pre id="templateResult"></pre>
-</section>
+<main class="layout">
+  <div class="hero">
+    <span class="badge">Repository Connected</span>
+    <h1>Asset Inspector & Exporter</h1>
+    <p>Inspect → temukan asset → klasifikasi → pilih → export → download.</p>
+  </div>
 
-<section>
-<h2>Repository Terhubung</h2>
-<button onclick="loadRepository()">Refresh data repository</button>
-<pre id="repositoryResult">Belum dimuat.</pre>
-</section>
+  <section id="inspect">
+    <h2>Upload & Inspect</h2>
+    <div class="row">
+      <input id="file" type="file" aria-label="Pilih file asset">
+      <button class="action" onclick="uploadAsset()">Upload</button>
+      <button class="secondary" onclick="inspectUploaded()">Inspect</button>
+    </div>
+    <pre id="uploadResult">Belum ada file.</pre>
+    <div id="entries" class="entry-list"></div>
+    <div class="row">
+      <button class="action" onclick="exportSelected()">Export Asset</button>
+      <span class="status">Untuk archive, centang entry yang ingin diekspor. Tanpa pilihan berarti export sumber penuh.</span>
+    </div>
+    <pre id="exportResult"></pre>
+  </section>
 
-<section>
-<h2>Roblox URL Asset</h2>
-<input id="url" style="width:min(720px,90%)" placeholder="https://www.roblox.com/...">
-<button onclick="getRoblox()">Download Asset</button>
-<pre id="result"></pre>
-</section>
+  <section id="templates">
+    <h2>Template</h2>
+    <div class="grid">
+      <div class="card"><b>AO</b><br><small>Ambient Occlusion</small></div>
+      <div class="card"><b>Texture</b><br><small>Texture umum</small></div>
+      <div class="card"><b>Kaca/XOR</b><br><small>Template kaca / glass</small></div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <input id="templatePath" placeholder="uploads/nama-file.png" style="flex:1;min-width:240px">
+      <button class="action" onclick="classifyTemplate()">Classify</button>
+    </div>
+    <pre id="templateResult"></pre>
+  </section>
 
-<section>
-<h2>Sprite Sheet</h2>
-<p><small>Upload image sprite sheet, lalu pecah menjadi frame ZIP berdasarkan grid.</small></p>
-<input id="spriteColumns" type="number" min="1" max="64" value="4" style="width:80px">
-<input id="spriteRows" type="number" min="1" max="64" value="4" style="width:80px">
-<button onclick="extractSpriteSheet()">Extract Frames</button>
-<pre id="spriteResult"></pre>
-</section>
+  <section id="repository">
+    <h2>Repository Terhubung</h2>
+    <div class="row">
+      <button class="action" onclick="loadRepository()">Refresh Data</button>
+      <button class="secondary" onclick="loadTree()">Refresh Tree</button>
+    </div>
+    <pre id="repositoryResult">Belum dimuat.</pre>
+  </section>
 
-<section><h2>Animasi Lampu</h2><div id="lights" class="grid"></div></section>
+  <section id="roblox">
+    <h2>Roblox URL Asset</h2>
+    <div class="row">
+      <input id="url" style="flex:1;min-width:240px" placeholder="https://www.roblox.com/...">
+      <button class="action" onclick="getRoblox()">Download Asset</button>
+    </div>
+    <pre id="result"></pre>
+  </section>
+
+  <section id="sprites">
+    <h2>Sprite Sheet</h2>
+    <p class="status">Upload image sprite sheet, lalu pecah menjadi frame ZIP berdasarkan grid.</p>
+    <div class="row">
+      <input id="spriteColumns" type="number" min="1" max="64" value="4" style="width:100px" aria-label="Jumlah kolom">
+      <input id="spriteRows" type="number" min="1" max="64" value="4" style="width:100px" aria-label="Jumlah baris">
+      <button class="action" onclick="extractSpriteSheet()">Extract Frames</button>
+    </div>
+    <pre id="spriteResult"></pre>
+  </section>
+
+  <section id="lights">
+    <h2>Animasi Lampu</h2>
+    <div id="lightsGrid" class="grid"></div>
+  </section>
+
+  <div class="footer">Game Mod Asset Lab • inspect/export untuk asset yang Anda berhak proses.</div>
+</main>
 
 <script>
 let uploadedPath='';
-let lastInspection=null;
-async function api(url, options){
+
+function byId(id){return document.getElementById(id)}
+
+async function api(url,options){
   const response=await fetch(url,options);
-  const data=await response.json().catch(()=>({detail:response.statusText}));
+  const data=await response.json().catch(()=>({detail:response.statusText||'Request gagal'}));
   if(!response.ok) throw new Error(data.detail||'Request gagal');
   return data;
 }
+
+function setText(id,value){byId(id).textContent=value}
+
 async function uploadAsset(){
-  const file=document.getElementById('file').files[0];
-  if(!file){document.getElementById('uploadResult').textContent='Pilih file dulu.';return;}
-  const form=new FormData();form.append('file',file);
+  const file=byId('file').files[0];
+  if(!file){setText('uploadResult','Pilih file dulu.');return}
+  const form=new FormData();
+  form.append('file',file);
+  setText('uploadResult','Mengunggah...');
   try{
     const data=await api('/api/assets/upload',{method:'POST',body:form});
     uploadedPath=data.path;
-    document.getElementById('templatePath').value=data.path;
-    lastInspection=data;
-document.getElementById('uploadResult').textContent=JSON.stringify(data,null,2);
-renderEntries(data);
-  }catch(e){document.getElementById('uploadResult').textContent=e.message;}
+    byId('templatePath').value=data.path;
+    setText('uploadResult',JSON.stringify(data,null,2));
+    await inspectUploaded();
+  }catch(error){setText('uploadResult',error.message)}
 }
-async function extractSpriteSheet(){
-  const path=uploadedPath||document.getElementById('templatePath').value;
-  const columns=document.getElementById('spriteColumns').value;
-  const rows=document.getElementById('spriteRows').value;
-  const result=document.getElementById('spriteResult');
-  if(!path){result.textContent='Upload atau pilih file image dulu.';return;}
-  result.innerHTML='<a href="/api/sprite-sheet/extract?path='+encodeURIComponent(path)+'&columns='+encodeURIComponent(columns)+'&rows='+encodeURIComponent(rows)+'">Download frame ZIP</a>';
-}
+
 async function inspectUploaded(){
-  const path=uploadedPath||document.getElementById('templatePath').value;
-  if(!path){document.getElementById('uploadResult').textContent='Belum ada path file.';return;}
+  const path=uploadedPath||byId('templatePath').value.trim();
+  if(!path){setText('uploadResult','Belum ada path file.');return}
   try{
     const data=await api('/api/assets/inspect?path='+encodeURIComponent(path));
-    lastInspection=data;
-    document.getElementById('uploadResult').textContent=JSON.stringify(data,null,2);
+    setText('uploadResult',JSON.stringify(data,null,2));
     renderEntries(data);
-  }catch(e){document.getElementById('uploadResult').textContent=e.message;}
+  }catch(error){setText('uploadResult',error.message)}
 }
+
 function renderEntries(data){
-  const box=document.getElementById('entries');
+  const box=byId('entries');
   box.innerHTML='';
   const entries=(data&&data.entries)||[];
-  if(!entries.length){box.textContent='Tidak ada entry archive. Export akan mengirim file sumber.';return;}
-  const title=document.createElement('h3');
-  title.textContent='Entries';
+  if(!entries.length){
+    box.textContent='Tidak ada entry archive. Export Asset akan mengirim file sumber.';
+    return;
+  }
+  const title=document.createElement('strong');
+  title.textContent='Entries archive';
   box.appendChild(title);
   for(const entry of entries){
     if(entry.is_dir) continue;
     const label=document.createElement('label');
-    label.style.display='block';
     const checkbox=document.createElement('input');
     checkbox.type='checkbox';
     checkbox.value=entry.name;
@@ -125,46 +244,80 @@ function renderEntries(data){
     box.appendChild(label);
   }
 }
+
 function exportSelected(){
-  const path=uploadedPath||document.getElementById('templatePath').value;
+  const path=uploadedPath||byId('templatePath').value.trim();
+  const result=byId('exportResult');
+  if(!path){result.textContent='Belum ada file.';return}
   const selected=[...document.querySelectorAll('.entry-check:checked')].map(x=>x.value);
   const params=new URLSearchParams();
   params.set('path',path);
   selected.forEach(name=>params.append('selected',name));
-  if(!path){document.getElementById('exportResult').textContent='Belum ada file.';return;}
-  document.getElementById('exportResult').innerHTML='<a href="/api/assets/export?'+params.toString()+'">Download export ZIP</a>';
+  result.innerHTML='<a class="badge" href="/api/assets/export?'+params.toString()+'">Download export ZIP</a>';
 }
+
 async function classifyTemplate(){
-  const path=document.getElementById('templatePath').value;
+  const path=byId('templatePath').value.trim();
+  if(!path){setText('templateResult','Masukkan path file.');return}
   try{
     const data=await api('/api/templates/classify?path='+encodeURIComponent(path));
-    document.getElementById('templateResult').textContent=JSON.stringify(data,null,2);
-  }catch(e){document.getElementById('templateResult').textContent=e.message;}
+    setText('templateResult',JSON.stringify(data,null,2));
+  }catch(error){setText('templateResult',error.message)}
 }
+
 async function loadRepository(){
   try{
     const data=await api('/api/repository');
-    document.getElementById('repositoryResult').textContent=JSON.stringify(data,null,2);
-  }catch(e){document.getElementById('repositoryResult').textContent=e.message;}
+    setText('repositoryResult',JSON.stringify(data,null,2));
+  }catch(error){setText('repositoryResult',error.message)}
 }
+
+async function loadTree(){
+  try{
+    const data=await api('/api/repository/tree');
+    setText('repositoryResult',JSON.stringify(data,null,2));
+  }catch(error){setText('repositoryResult',error.message)}
+}
+
 async function getRoblox(){
-  const input=document.getElementById('url');
-  const u=input.value.trim();
-  const result=document.getElementById('result');
-  if(!u){result.textContent='Masukkan URL Roblox dulu.';return;}
-  result.textContent='Memvalidasi URL...';
+  const u=byId('url').value.trim();
+  if(!u){setText('result','Masukkan URL Roblox dulu.');return}
+  setText('result','Memvalidasi URL...');
   try{
     const data=await api('/api/assets/roblox/validate?url='+encodeURIComponent(u));
-    result.textContent='Asset ID '+data.asset_id+' valid. Memulai download...';
+    setText('result','Asset ID '+data.asset_id+' valid. Memulai download...');
     window.location.href='/api/assets/roblox/url?url='+encodeURIComponent(u);
-  }catch(e){result.textContent=e.message;}
+  }catch(error){setText('result',error.message)}
 }
+
+async function extractSpriteSheet(){
+  const path=uploadedPath||byId('templatePath').value.trim();
+  const columns=Number(byId('spriteColumns').value);
+  const rows=Number(byId('spriteRows').value);
+  const result=byId('spriteResult');
+  if(!path){result.textContent='Upload atau pilih file image dulu.';return}
+  if(!Number.isInteger(columns)||!Number.isInteger(rows)||columns<1||columns>64||rows<1||rows>64){
+    result.textContent='Rows dan columns harus bilangan bulat 1-64.';
+    return
+  }
+  result.innerHTML='<a class="badge" href="/api/sprite-sheet/extract?path='+encodeURIComponent(path)+'&columns='+columns+'&rows='+rows+'">Download frame ZIP</a>';
+}
+
 for(const t of ['strobo','rotator','ledbar']){
-  const d=document.createElement('div');
-  d.className='card';
-  d.innerHTML='<h3>'+t.toUpperCase()+'</h3><a href="/api/lights/'+t+'/download?platform=bussid">BUSSID ZIP</a> | <a href="/api/lights/'+t+'/download?platform=roblox">Roblox ZIP</a> | <a href="/api/lights/'+t+'">JSON Preview</a>';
-  document.getElementById('lights').append(d);
+  const card=document.createElement('div');
+  card.className='card';
+  card.innerHTML='<h3>'+t.toUpperCase()+'</h3><div class="row"><a href="/api/lights/'+t+'/download?platform=bussid">BUSSID ZIP</a><a href="/api/lights/'+t+'/download?platform=roblox">Roblox ZIP</a><a href="/api/lights/'+t+'">JSON Preview</a></div>';
+  byId('lightsGrid').append(card);
 }
+
+const menuButton=byId('menuButton');
+const menu=byId('menu');
+menuButton.addEventListener('click',()=>{
+  const open=menu.classList.toggle('open');
+  menuButton.setAttribute('aria-expanded',String(open));
+});
+menu.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>menu.classList.remove('open')));
+
 loadRepository();
 </script>
 </body>
