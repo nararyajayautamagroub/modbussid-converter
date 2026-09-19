@@ -7,7 +7,7 @@ from fastapi.responses import FileResponse
 from shared.light_animation import VALID_LIGHT_TYPES, build_animation, to_dict
 from shared.package_export import export_light_package
 from web.asset_api import router as asset_router
-from web.catalog import repository_catalog
+from web.catalog import repository_catalog, repository_tree
 from web.template_api import router as template_router
 from web.sprite_api import router as sprite_router
 
@@ -34,6 +34,11 @@ def health():
 @app.get("/api/categories", tags=["catalog"])
 def categories():
     return repository_catalog()["categories"]
+
+
+@app.get("/api/repository/tree", tags=["catalog"])
+def repository_tree_endpoint(prefix: str = ""):
+    return repository_tree(prefix)
 
 
 @app.get("/api/repository", tags=["catalog"])
