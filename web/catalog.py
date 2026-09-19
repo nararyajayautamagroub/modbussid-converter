@@ -14,6 +14,11 @@ GITHUB_REPO = os.getenv(
 GITHUB_API = f"https://api.github.com/repos/{GITHUB_REPO}"
 _REMOTE_CACHE: tuple[float, dict] | None = None
 CACHE_SECONDS = 15
+IGNORED_LOCAL_PARTS = {"__pycache__", ".git", "uploads", "generated"}
+
+
+def _is_ignored(path: Path) -> bool:
+    return any(part in IGNORED_LOCAL_PARTS for part in path.parts)
 
 
 def _local_catalog() -> dict:
@@ -27,20 +32,16 @@ def _local_catalog() -> dict:
             files = [
                 p.relative_to(folder).as_posix()
                 for p in sorted(folder.rglob("*"))
-                if p.is_file()
+                if p.is_file() and not _is_ignored(p)
             ]
             categories[platform][folder.name] = {"files": files, "count": len(files)}
 
     template_root = ROOT / "templates"
-    templates = (
-        [
-            p.relative_to(ROOT).as_posix()
-            for p in sorted(template_root.rglob("*"))
-            if p.is_file()
-        ]
-        if template_root.is_dir()
-        else []
-    )
+    templates = [
+        p.relative_to(ROOT).as_posix()
+        for p in sorted(template_root.rglob("*"))
+        if p.is_file() and not _is_ignored(p)
+    ] if template_root.is_dir() else []
 
     return {
         "source": "local_repository",
