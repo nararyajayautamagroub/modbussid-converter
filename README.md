@@ -33,6 +33,7 @@ Classifier memakai nama file berbasis token agar radio.png tidak salah dibaca se
 - Sinkronisasi catalog ke GitHub repository publik secara berkala
 - Endpoint health dan capabilities
 - Animasi data untuk Strobo, Rotator, LED Bar
+- Paket Roblox lampu berisi JSON + script Lua untuk Roblox Studio
 - Inspect ukuran/format image dan ekstraksi Sprite Sheet menjadi frame ZIP
 - Live repository tree dengan default branch, commit SHA, tanggal commit, dan filter prefix
 - Download asset Roblox publik melalui endpoint resmi Asset Delivery
