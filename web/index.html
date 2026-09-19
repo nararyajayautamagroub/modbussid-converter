@@ -1,1 +1,10 @@
-<!doctype html><html lang='id'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Game Mod Asset Lab</title></head><body><h1>Game Mod Asset Lab</h1><h2>Light Animation</h2><p>Strobo · Rotator · LED Bar</p><div id='app'></div><script>for(const t of ['strobo','rotator','ledbar']){const h=document.createElement('h3');h.textContent=t.toUpperCase();app.append(h);for(const p of ['bussid','roblox']){const a=document.createElement('a');a.href=`/api/lights/${t}/download?platform=${p}`;a.textContent=`Download ${p}`;a.style.margin='8px';app.append(a)}}</script></body></html>
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Game Mod Asset Lab</title>
+<style>body{font-family:system-ui;background:#111;color:#eee;max-width:1000px;margin:auto;padding:24px}section{border:1px solid #333;padding:16px;margin:12px 0;border-radius:12px}input,button{padding:10px;margin:4px}a{color:#7dd3fc}</style></head>
+<body><h1>Game Mod Asset Lab</h1><p>Inspect → cari asset → export → download.</p>
+<section><h2>Roblox URL Asset</h2><input id="url" placeholder="https://www.roblox.com/..."><button onclick="getRoblox()">Download Asset</button><pre id="result"></pre></section>
+<section><h2>Animasi Lampu</h2><div id="lights"></div></section>
+<script>
+async function getRoblox(){const u=document.getElementById('url').value;document.getElementById('result').textContent='Memproses...';location.href='/api/assets/roblox/url?url='+encodeURIComponent(u)}
+for(const t of ['strobo','rotator','ledbar']){const d=document.createElement('div');d.innerHTML='<h3>'+t.toUpperCase()+'</h3><a href="/api/lights/'+t+'/download?platform=bussid">BUSSID ZIP</a> | <a href="/api/lights/'+t+'/download?platform=roblox">Roblox ZIP</a> | <a href="/api/lights/'+t+'">JSON Preview</a>';document.getElementById('lights').append(d)}
+</script></body></html>
