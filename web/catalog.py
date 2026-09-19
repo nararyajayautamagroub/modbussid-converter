@@ -118,19 +118,47 @@ def repository_catalog() -> dict:
 
 def repository_tree(prefix: str = "") -> dict:
     prefix = prefix.strip().strip("/")
-    remote = _github_catalog()
-    files = remote["files"]
+    try:
+        remote = _github_catalog()
+        files = remote["files"]
+        source = "github"
+        payload = {
+            "repository": remote["repository"],
+            "default_branch": remote["default_branch"],
+            "commit_sha": remote["commit_sha"],
+            "tree_sha": remote["tree_sha"],
+            "truncated": remote["truncated"],
+            "updated_at": remote["updated_at"],
+        }
+    except (HTTPError, URLError, TimeoutError, ValueError, OSError, KeyError) as exc:
+        local = _local_catalog()
+        files = [
+            str(path.relative_to(ROOT))
+            for path in sorted(ROOT.rglob("*"))
+            if path.is_file() and not _is_ignored(path)
+        ]
+        source = "local_repository"
+        payload = {
+            "repository": local["repository"],
+            "default_branch": None,
+            "commit_sha": None,
+            "tree_sha": None,
+            "truncated": False,
+            "updated_at": time.time(),
+            "remote_status": f"unavailable: {exc}",
+        }
+
     if prefix:
-        files = [item for item in files if item == prefix or item.startswith(prefix + "/")]
+        files = [
+            item
+            for item in files
+            if item == prefix or item.startswith(prefix + "/")
+        ]
+
     return {
-        "source": "github",
-        "repository": remote["repository"],
-        "default_branch": remote["default_branch"],
-        "commit_sha": remote["commit_sha"],
-        "tree_sha": remote["tree_sha"],
+        "source": source,
+        **payload,
         "prefix": prefix,
         "file_count": len(files),
         "files": files,
-        "truncated": remote["truncated"],
-        "updated_at": remote["updated_at"],
     }
