@@ -5,6 +5,8 @@ import tarfile
 import zipfile
 from pathlib import Path
 
+from .template_classifier import classify_template, TEMPLATES
+
 KNOWN_EXTENSIONS = {
     ".bussidmod": "BUSSID mod",
     ".bussidvehicle": "BUSSID vehicle",
@@ -56,19 +58,48 @@ def detect_container(path: Path) -> str:
     return "file"
 
 
+def infer_category(path: Path) -> str:
+    parts = {part.lower() for part in path.parts}
+    if "bussid" in parts:
+        root = next((part for part in path.parts if part.lower() == "bussid"), "")
+        relative = path.relative_to(next(p for p in path.parents if p.name.lower() == root))
+        top = relative.parts[0].lower() if relative.parts else ""
+        return f"bussid/{top}" if top else "bussid"
+    if "ets2" in parts:
+        root = next((part for part in path.parts if part.lower() == "ets2"), "")
+        relative = path.relative_to(next(p for p in path.parents if p.name.lower() == root))
+        top = relative.parts[0].lower() if relative.parts else ""
+        return f"ets2/{top}" if top else "ets2"
+    if "roblox" in parts:
+        root = next((part for part in path.parts if part.lower() == "roblox"), "")
+        relative = path.relative_to(next(p for p in path.parents if p.name.lower() == root))
+        top = relative.parts[0].lower() if relative.parts else ""
+        return f"roblox/{top}" if top else "roblox"
+    if "templates" in parts:
+        return "templates"
+    return "unknown"
+
+
 def inspect_file(path: Path) -> dict:
     path = path.resolve()
     if not path.is_file():
         raise FileNotFoundError(path)
     stat = path.stat()
-    return {
+    extension = path.suffix.lower()
+    result = {
         "name": path.name,
         "size": stat.st_size,
-        "extension": path.suffix.lower(),
-        "type": KNOWN_EXTENSIONS.get(path.suffix.lower(), "unknown"),
+        "extension": extension,
+        "type": KNOWN_EXTENSIONS.get(extension, "unknown"),
+        "category": infer_category(path),
         "container": detect_container(path),
         "sha256": sha256(path),
     }
+    if extension in {".png", ".jpg", ".jpeg", ".webp", ".tga", ".bmp"}:
+        kind = classify_template(path)
+        result["template"] = kind
+        result["template_label"] = TEMPLATES[kind]
+    return result
 
 
 def inspect_archive(path: Path) -> list[dict]:
