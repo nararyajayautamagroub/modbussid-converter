@@ -1,1 +1,0 @@
-import hashlib\nfrom pathlib import Path\n\ndef sha256(path:Path)->str:\n    h=hashlib.sha256()\n    with path.open('rb') as f:\n        for chunk in iter(lambda:f.read(1024*1024),b''): h.update(chunk)\n    return h.hexdigest()\n\ndef protection_note()->str:\n    return 'Protected/encrypted content is detected and reported, not bypassed.'\n
