@@ -1,10 +1,120 @@
 <!doctype html>
-<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Game Mod Asset Lab</title>
-<style>body{font-family:system-ui;background:#111;color:#eee;max-width:1000px;margin:auto;padding:24px}section{border:1px solid #333;padding:16px;margin:12px 0;border-radius:12px}input,button{padding:10px;margin:4px}a{color:#7dd3fc}</style></head>
-<body><h1>Game Mod Asset Lab</h1><p>Inspect → cari asset → export → download.</p>
-<section><h2>Roblox URL Asset</h2><input id="url" placeholder="https://www.roblox.com/..."><button onclick="getRoblox()">Download Asset</button><pre id="result"></pre></section>
-<section><h2>Animasi Lampu</h2><div id="lights"></div></section>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Game Mod Asset Lab</title>
+<style>
+:root{font-family:system-ui,sans-serif;background:#0f1115;color:#eee}
+body{max-width:1100px;margin:auto;padding:24px}
+section{border:1px solid #30343b;padding:18px;margin:14px 0;border-radius:14px;background:#171a21}
+input,button{padding:10px;margin:4px;border-radius:8px;border:1px solid #3b414b;background:#0f1115;color:#eee}
+button{cursor:pointer}
+a{color:#7dd3fc}
+pre{white-space:pre-wrap;overflow:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.card{padding:12px;border:1px solid #30343b;border-radius:10px}
+small{color:#a5adba}
+</style>
+</head>
+<body>
+<h1>Game Mod Asset Lab</h1>
+<p>Inspect → cari asset → klasifikasi → export → download.</p>
+
+<section>
+<h2>Upload & Inspect</h2>
+<input id="file" type="file">
+<button onclick="uploadAsset()">Upload</button>
+<button onclick="inspectUploaded()">Inspect</button>
+<pre id="uploadResult">Belum ada file.</pre>
+</section>
+
+<section>
+<h2>Template</h2>
+<div class="grid">
+<div class="card"><b>AO</b><br><small>Ambient Occlusion</small></div>
+<div class="card"><b>Texture</b><br><small>Texture umum</small></div>
+<div class="card"><b>Kaca/XOR</b><br><small>Template kaca / glass</small></div>
+</div>
+<input id="templatePath" placeholder="uploads/nama-file.png" style="width:min(720px,90%)">
+<button onclick="classifyTemplate()">Classify</button>
+<pre id="templateResult"></pre>
+</section>
+
+<section>
+<h2>Repository Terhubung</h2>
+<button onclick="loadRepository()">Refresh data repository</button>
+<pre id="repositoryResult">Belum dimuat.</pre>
+</section>
+
+<section>
+<h2>Roblox URL Asset</h2>
+<input id="url" style="width:min(720px,90%)" placeholder="https://www.roblox.com/...">
+<button onclick="getRoblox()">Download Asset</button>
+<pre id="result"></pre>
+</section>
+
+<section><h2>Animasi Lampu</h2><div id="lights" class="grid"></div></section>
+
 <script>
-async function getRoblox(){const u=document.getElementById('url').value;document.getElementById('result').textContent='Memproses...';location.href='/api/assets/roblox/url?url='+encodeURIComponent(u)}
-for(const t of ['strobo','rotator','ledbar']){const d=document.createElement('div');d.innerHTML='<h3>'+t.toUpperCase()+'</h3><a href="/api/lights/'+t+'/download?platform=bussid">BUSSID ZIP</a> | <a href="/api/lights/'+t+'/download?platform=roblox">Roblox ZIP</a> | <a href="/api/lights/'+t+'">JSON Preview</a>';document.getElementById('lights').append(d)}
-</script></body></html>
+let uploadedPath='';
+async function api(url, options){
+  const response=await fetch(url,options);
+  const data=await response.json().catch(()=>({detail:response.statusText}));
+  if(!response.ok) throw new Error(data.detail||'Request gagal');
+  return data;
+}
+async function uploadAsset(){
+  const file=document.getElementById('file').files[0];
+  if(!file){document.getElementById('uploadResult').textContent='Pilih file dulu.';return;}
+  const form=new FormData();form.append('file',file);
+  try{
+    const data=await api('/api/assets/upload',{method:'POST',body:form});
+    uploadedPath=data.path;
+    document.getElementById('templatePath').value=data.path;
+    document.getElementById('uploadResult').textContent=JSON.stringify(data,null,2);
+  }catch(e){document.getElementById('uploadResult').textContent=e.message;}
+}
+async function inspectUploaded(){
+  const path=uploadedPath||document.getElementById('templatePath').value;
+  if(!path){document.getElementById('uploadResult').textContent='Belum ada path file.';return;}
+  try{
+    const data=await api('/api/assets/inspect?path='+encodeURIComponent(path));
+    document.getElementById('uploadResult').textContent=JSON.stringify(data,null,2);
+  }catch(e){document.getElementById('uploadResult').textContent=e.message;}
+}
+async function classifyTemplate(){
+  const path=document.getElementById('templatePath').value;
+  try{
+    const data=await api('/api/templates/classify?path='+encodeURIComponent(path));
+    document.getElementById('templateResult').textContent=JSON.stringify(data,null,2);
+  }catch(e){document.getElementById('templateResult').textContent=e.message;}
+}
+async function loadRepository(){
+  try{
+    const data=await api('/api/repository');
+    document.getElementById('repositoryResult').textContent=JSON.stringify(data,null,2);
+  }catch(e){document.getElementById('repositoryResult').textContent=e.message;}
+}
+async function getRoblox(){
+  const u=document.getElementById('url').value;
+  document.getElementById('result').textContent='Memproses...';
+  try{
+    const response=await fetch('/api/assets/roblox/url?url='+encodeURIComponent(u));
+    if(!response.ok){
+      const data=await response.json().catch(()=>({detail:'Request gagal'}));
+      throw new Error(data.detail||'Request gagal');
+    }
+    window.location.href='/api/assets/roblox/url?url='+encodeURIComponent(u);
+  }catch(e){document.getElementById('result').textContent=e.message;}
+}
+for(const t of ['strobo','rotator','ledbar']){
+  const d=document.createElement('div');
+  d.className='card';
+  d.innerHTML='<h3>'+t.toUpperCase()+'</h3><a href="/api/lights/'+t+'/download?platform=bussid">BUSSID ZIP</a> | <a href="/api/lights/'+t+'/download?platform=roblox">Roblox ZIP</a> | <a href="/api/lights/'+t+'">JSON Preview</a>';
+  document.getElementById('lights').append(d);
+}
+loadRepository();
+</script>
+</body>
+</html>
