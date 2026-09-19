@@ -61,12 +61,11 @@ def download_asset(url: str, target: Path) -> dict:
         content_length = response.headers.get("Content-Length")
         if content_length:
             try:
-                if int(content_length) > MAX_ASSET_BYTES:
-                    raise ValueError("Asset melebihi batas 50 MB.")
-            except ValueError as exc:
-                if "melebihi" in str(exc):
-                    raise
-                # Content-Length yang tidak valid diabaikan; batas tetap dicek saat streaming.
+                declared_size = int(content_length)
+            except ValueError:
+                declared_size = None
+            if declared_size is not None and declared_size > MAX_ASSET_BYTES:
+                raise ValueError("Asset melebihi batas 50 MB.")
 
         total = 0
         with target.open("wb") as handle:
