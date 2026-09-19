@@ -34,22 +34,40 @@ def _local_catalog() -> dict:
                 for p in sorted(folder.rglob("*"))
                 if p.is_file() and not _is_ignored(p)
             ]
-            categories[platform][folder.name] = {"files": files, "count": len(files)}
+            categories[platform][folder.name] = {
+                "files": files,
+                "count": len(files),
+            }
 
     template_root = ROOT / "templates"
-    templates = [
-        p.relative_to(ROOT).as_posix()
-        for p in sorted(template_root.rglob("*"))
-        if p.is_file() and not _is_ignored(p)
-    ] if template_root.is_dir() else []
+    templates = (
+        [
+            p.relative_to(ROOT).as_posix()
+            for p in sorted(template_root.rglob("*"))
+            if p.is_file() and not _is_ignored(p)
+        ]
+        if template_root.is_dir()
+        else []
+    )
 
     return {
         "source": "local_repository",
         "repository": GITHUB_REPO,
-        "commit": None,
         "categories": categories,
         "templates": templates,
     }
+
+
+def _json_request(url: str) -> dict:
+    request = Request(
+        url,
+        headers={
+            "Accept": "application/vnd.github+json",
+            "User-Agent": "Game-Mod-Asset-Lab/2.0",
+        },
+    )
+    with urlopen(request, timeout=10) as response:
+        return json.loads(response.read().decode("utf-8"))
 
 
 def _github_catalog() -> dict:
@@ -58,28 +76,29 @@ def _github_catalog() -> dict:
     if _REMOTE_CACHE and now - _REMOTE_CACHE[0] < CACHE_SECONDS:
         return _REMOTE_CACHE[1]
 
-    request = Request(
-        f"{GITHUB_API}/git/trees/main?recursive=1",
-        headers={
-            "Accept": "application/vnd.github+json",
-            "User-Agent": "Game-Mod-Asset-Lab/2.0",
-        },
+    repository = _json_request(GITHUB_API)
+    default_branch = repository.get("default_branch", "main")
+    commit = _json_request(f"{GITHUB_API}/commits/{default_branch}")
+    tree = _json_request(
+        f"{GITHUB_API}/git/trees/{commit['sha']}?recursive=1"
     )
-    with urlopen(request, timeout=10) as response:
-        payload = json.loads(response.read().decode("utf-8"))
 
     files = [
         item["path"]
-        for item in payload.get("tree", [])
+        for item in tree.get("tree", [])
         if item.get("type") == "blob"
     ]
     data = {
         "source": "github",
         "repository": GITHUB_REPO,
-        "commit": payload.get("sha"),
+        "default_branch": default_branch,
+        "commit_sha": commit.get("sha"),
+        "commit_message": commit.get("commit", {}).get("message", "").splitlines()[0],
+        "commit_date": commit.get("commit", {}).get("committer", {}).get("date"),
+        "tree_sha": tree.get("sha"),
         "file_count": len(files),
         "files": files,
-        "truncated": bool(payload.get("truncated", False)),
+        "truncated": bool(tree.get("truncated", False)),
         "updated_at": time.time(),
     }
     _REMOTE_CACHE = (now, data)
@@ -91,7 +110,27 @@ def repository_catalog() -> dict:
     try:
         local["remote"] = _github_catalog()
         local["remote_status"] = "ok"
-    except (HTTPError, URLError, TimeoutError, ValueError, OSError) as exc:
+    except (HTTPError, URLError, TimeoutError, ValueError, OSError, KeyError) as exc:
         local["remote"] = None
         local["remote_status"] = f"unavailable: {exc}"
     return local
+
+
+def repository_tree(prefix: str = "") -> dict:
+    prefix = prefix.strip().strip("/")
+    remote = _github_catalog()
+    files = remote["files"]
+    if prefix:
+        files = [item for item in files if item == prefix or item.startswith(prefix + "/")]
+    return {
+        "source": "github",
+        "repository": remote["repository"],
+        "default_branch": remote["default_branch"],
+        "commit_sha": remote["commit_sha"],
+        "tree_sha": remote["tree_sha"],
+        "prefix": prefix,
+        "file_count": len(files),
+        "files": files,
+        "truncated": remote["truncated"],
+        "updated_at": remote["updated_at"],
+    }
