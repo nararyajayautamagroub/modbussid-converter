@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>modbussid-converter</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<main class="shell">
+<header><div><p class="eyebrow">BUSSID TOOLKIT</p><h1>modbussid-converter</h1><p class="muted">Inspect, extract, dan siapkan asset mod BUSSID dari browser.</p></div></header>
+<section class="card">
+<form id="form">
+<label class="drop" id="drop"><input id="file" type="file" required><strong>📦 Pilih file mod BUSSID</strong><span>atau drag & drop ke sini</span></label>
+<div class="row"><label>Format export<select id="format"><option value="all">Semua</option><option value="obj">OBJ</option><option value="dae">DAE</option><option value="fbx">FBX</option><option value="blend">BLEND</option></select></label><button>Mulai proses</button></div>
+</form>
+<div id="status" class="status">Belum ada file.</div>
+<pre id="result" hidden></pre>
+</section>
+<footer>Gunakan hanya file dan asset yang memang kamu berhak inspeksi.</footer>
+</main>
+<script src="/static/app.js"></script>
+</body></html>
