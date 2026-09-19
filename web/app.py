@@ -54,6 +54,7 @@ def capabilities():
         "template_classification": ["ao", "texture", "xor"],
         "light_animation_package": ["strobo", "rotator", "ledbar"],
         "roblox_public_asset_download": True,
+        "roblox_studio_light_script_export": True,
         "native_rbxm_generation": False,
         "native_proprietary_game_format_decode": False,
         "encryption_drm_bypass": False,
