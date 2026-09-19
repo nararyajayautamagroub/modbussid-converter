@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-from pathlib import Path
-
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
 
-from shared.image_tools import create_spritesheet, inspect_image
+from shared.image_tools import SUPPORTED_IMAGE_EXTENSIONS, extract_sprites, inspect_image
 from shared.path_security import ROOT, safe_repo_file
 
 router = APIRouter(prefix="/api/sprite-sheet", tags=["sprite-sheet"])
@@ -22,19 +20,19 @@ def inspect(path: str):
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
-@router.get("/create")
-def create(path: str, columns: int = 4, rows: int = 4):
+@router.get("/extract")
+def extract(path: str, columns: int = 4, rows: int = 4):
     source = safe_repo_file(path)
-    if source.suffix.lower() not in {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tga"}:
+    if source.suffix.lower() not in SUPPORTED_IMAGE_EXTENSIONS:
         raise HTTPException(
             status_code=400,
             detail="Sprite Sheet hanya menerima image raster yang didukung.",
         )
 
-    output = GENERATED / f"{source.stem}_spritesheet.png"
+    output = GENERATED / f"{source.stem}_frames.zip"
     try:
-        create_spritesheet(source, output, columns, rows)
+        extract_sprites(source, output, columns, rows)
     except (OSError, ValueError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
-    return FileResponse(output, filename=output.name, media_type="image/png")
+    return FileResponse(output, filename=output.name, media_type="application/zip")
