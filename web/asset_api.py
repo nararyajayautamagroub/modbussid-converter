@@ -8,28 +8,15 @@ from fastapi.responses import FileResponse
 
 from shared.asset_export import export_found_asset
 from shared.asset_inspector import inspect_archive, inspect_file
+from shared.path_security import ROOT, safe_repo_file
 from shared.roblox_url import asset_id_from_url, download_asset
 
 router = APIRouter(prefix="/api/assets", tags=["assets"])
-ROOT = Path(__file__).resolve().parent.parent
 UPLOADS = ROOT / "uploads"
 GENERATED = ROOT / "web" / "generated"
 UPLOADS.mkdir(exist_ok=True)
 GENERATED.mkdir(exist_ok=True)
 MAX_UPLOAD_BYTES = 100 * 1024 * 1024
-
-
-def _safe_repo_path(raw_path: str) -> Path:
-    candidate = Path(raw_path).expanduser().resolve()
-    try:
-        candidate.relative_to(ROOT)
-    except ValueError as exc:
-        raise HTTPException(
-            status_code=400, detail="Path harus berada di dalam folder repository."
-        ) from exc
-    if not candidate.is_file():
-        raise HTTPException(status_code=404, detail="File tidak ditemukan.")
-    return candidate
 
 
 def _unique_upload_path(filename: str) -> Path:
@@ -75,7 +62,7 @@ async def upload(file: UploadFile = File(...)):
 
 @router.get("/inspect")
 def inspect(path: str):
-    source = _safe_repo_path(path)
+    source = safe_repo_file(path)
     try:
         return {"file": inspect_file(source), "entries": inspect_archive(source)}
     except (OSError, ValueError) as exc:
@@ -84,7 +71,7 @@ def inspect(path: str):
 
 @router.get("/export")
 def export(path: str, selected: list[str] | None = None):
-    source = _safe_repo_path(path)
+    source = safe_repo_file(path)
     output = GENERATED / f"{source.stem}_export.zip"
     try:
         export_found_asset(source, output, selected)
