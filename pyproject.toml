@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "modbussid-converter"
+version = "0.1.0"
+description = "BUSSID mod inspection, extraction and 3D export toolkit"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+modbussid = "modbussid.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
