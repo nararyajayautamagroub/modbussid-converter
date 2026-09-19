@@ -8,7 +8,7 @@ from fastapi.responses import FileResponse
 
 from shared.asset_export import export_found_asset
 from shared.asset_inspector import inspect_archive, inspect_file
-from shared.roblox_url import download_asset
+from shared.roblox_url import asset_id_from_url, download_asset
 
 router = APIRouter(prefix="/api/assets", tags=["assets"])
 ROOT = Path(__file__).resolve().parent.parent
@@ -32,30 +32,45 @@ def _safe_repo_path(raw_path: str) -> Path:
     return candidate
 
 
+def _unique_upload_path(filename: str) -> Path:
+    clean_name = Path(filename).name
+    if not clean_name or clean_name in {".", ".."}:
+        raise HTTPException(status_code=400, detail="Nama file tidak valid.")
+
+    target = UPLOADS / clean_name
+    stem, suffix = target.stem, target.suffix
+    counter = 1
+    while target.exists():
+        target = UPLOADS / f"{stem}_{counter}{suffix}"
+        counter += 1
+    return target.resolve()
+
+
 @router.post("/upload")
 async def upload(file: UploadFile = File(...)):
-    if not file.filename:
-        raise HTTPException(status_code=400, detail="Nama file upload kosong.")
-
-    target = (UPLOADS / Path(file.filename).name).resolve()
-    try:
-        target.relative_to(UPLOADS.resolve())
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail="Nama file tidak valid.") from exc
-
+    target = _unique_upload_path(file.filename or "")
     total = 0
-    with target.open("wb") as handle:
-        while True:
-            chunk = await file.read(1024 * 1024)
-            if not chunk:
-                break
-            total += len(chunk)
-            if total > MAX_UPLOAD_BYTES:
-                target.unlink(missing_ok=True)
-                raise HTTPException(status_code=413, detail="Upload melebihi 100 MB.")
-            handle.write(chunk)
+    try:
+        with target.open("wb") as handle:
+            while True:
+                chunk = await file.read(1024 * 1024)
+                if not chunk:
+                    break
+                total += len(chunk)
+                if total > MAX_UPLOAD_BYTES:
+                    target.unlink(missing_ok=True)
+                    raise HTTPException(
+                        status_code=413, detail="Upload melebihi 100 MB."
+                    )
+                handle.write(chunk)
+    finally:
+        await file.close()
 
-    return {"name": target.name, "path": target.relative_to(ROOT).as_posix(), "bytes": total}
+    return {
+        "name": target.name,
+        "path": target.relative_to(ROOT).as_posix(),
+        "bytes": total,
+    }
 
 
 @router.get("/inspect")
@@ -70,13 +85,20 @@ def inspect(path: str):
 @router.get("/export")
 def export(path: str, selected: list[str] | None = None):
     source = _safe_repo_path(path)
-    output_name = f"{source.stem}_export.zip"
-    output = GENERATED / output_name
+    output = GENERATED / f"{source.stem}_export.zip"
     try:
         export_found_asset(source, output, selected)
     except (OSError, ValueError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return FileResponse(output, filename=output.name, media_type="application/zip")
+
+
+@router.get("/roblox/validate")
+def roblox_validate(url: str):
+    try:
+        return {"valid": True, "asset_id": asset_id_from_url(url)}
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
 @router.get("/roblox/url")
@@ -91,4 +113,8 @@ def roblox_url(url: str):
 
     output = GENERATED / f"roblox_{result['asset_id']}.bin"
     output.write_bytes(data)
-    return FileResponse(output, filename=output.name, media_type="application/octet-stream")
+    return FileResponse(
+        output,
+        filename=output.name,
+        media_type="application/octet-stream",
+    )
