@@ -31,3 +31,8 @@ def test_repository_catalog_contains_platforms():
     assert "bussid" in data
     assert "ets2" in data
     assert "roblox" in data
+
+
+def test_path_security_blocks_outside_files():
+    response = client.get("/api/templates/classify?path=/etc/passwd")
+    assert response.status_code == 400
