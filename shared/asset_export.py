@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 import json
-import shutil
 import tarfile
 import zipfile
 from pathlib import Path
 
-from .asset_inspector import report
+from .asset_inspector import detect_container, report
 
 MAX_ENTRY_BYTES = 100 * 1024 * 1024
 
@@ -76,7 +75,7 @@ def export_found_asset(
                     with archive.open(info, "r") as src, out.open(name, "w") as dst:
                         _copy_stream(src, dst)
 
-        elif source.suffix.lower() in {".tar", ".gz", ".tgz", ".bz2", ".xz"}:
+        elif detect_container(source) == "tar":
             with tarfile.open(source) as archive:
                 members = {member.name: member for member in archive.getmembers()}
                 missing = names - set(members)
