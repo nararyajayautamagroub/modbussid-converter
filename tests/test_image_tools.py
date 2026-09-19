@@ -1,8 +1,9 @@
 from pathlib import Path
+from zipfile import ZipFile
 
 from PIL import Image
 
-from shared.image_tools import create_spritesheet, inspect_image
+from shared.image_tools import extract_sprites, inspect_image
 
 
 def test_image_info(tmp_path: Path):
@@ -14,12 +15,12 @@ def test_image_info(tmp_path: Path):
     assert info["height"] == 80
 
 
-def test_create_spritesheet(tmp_path: Path):
+def test_extract_sprites(tmp_path: Path):
     source = tmp_path / "input.png"
-    output = tmp_path / "output.png"
+    output = tmp_path / "frames.zip"
     Image.new("RGBA", (120, 80)).save(source)
 
-    create_spritesheet(source, output, 3, 2)
+    extract_sprites(source, output, 3, 2)
 
-    with Image.open(output) as image:
-        assert image.size == (120, 80)
+    with ZipFile(output) as archive:
+        assert len(archive.namelist()) == 6
