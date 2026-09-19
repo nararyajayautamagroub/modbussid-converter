@@ -9,6 +9,7 @@ from shared.package_export import export_light_package
 from web.asset_api import router as asset_router
 from web.catalog import repository_catalog
 from web.template_api import router as template_router
+from web.sprite_api import router as sprite_router
 
 ROOT = Path(__file__).resolve().parent
 GENERATED = ROOT / "generated"
@@ -17,6 +18,7 @@ GENERATED.mkdir(exist_ok=True)
 app = FastAPI(title="Game Mod Asset Lab", version="2.0.0")
 app.include_router(asset_router)
 app.include_router(template_router)
+app.include_router(sprite_router)
 
 
 @app.get("/", tags=["web"])
