@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import json
+import shutil
 import tarfile
 import zipfile
 from pathlib import Path
 
 from .asset_inspector import report
+
+MAX_ENTRY_BYTES = 100 * 1024 * 1024
 
 
 def _selected_names(selected: list[str] | None) -> set[str] | None:
@@ -15,6 +18,19 @@ def _selected_names(selected: list[str] | None) -> set[str] | None:
     if not cleaned:
         raise ValueError("Daftar asset yang dipilih kosong.")
     return cleaned
+
+
+def _copy_stream(source, target, limit: int = MAX_ENTRY_BYTES) -> int:
+    total = 0
+    while True:
+        chunk = source.read(1024 * 1024)
+        if not chunk:
+            break
+        total += len(chunk)
+        if total > limit:
+            raise ValueError("Entry asset melebihi batas 100 MB.")
+        target.write(chunk)
+    return total
 
 
 def export_found_asset(
@@ -33,21 +49,33 @@ def export_found_asset(
     destination.parent.mkdir(parents=True, exist_ok=True)
 
     with zipfile.ZipFile(
-        destination, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9
+        destination,
+        "w",
+        compression=zipfile.ZIP_DEFLATED,
+        compresslevel=9,
     ) as out:
         if names is None:
+            if source.stat().st_size > MAX_ENTRY_BYTES:
+                raise ValueError("Source melebihi batas export 100 MB.")
             out.write(source, source.name)
+
         elif source.suffix.lower() == ".zip":
             with zipfile.ZipFile(source) as archive:
-                available = {info.filename for info in archive.infolist()}
-                missing = names - available
+                available = {info.filename: info for info in archive.infolist()}
+                missing = names - set(available)
                 if missing:
                     raise ValueError(
                         "Entry ZIP tidak ditemukan: " + ", ".join(sorted(missing))
                     )
-                for info in archive.infolist():
-                    if info.filename in names and not info.is_dir():
-                        out.writestr(info, archive.read(info.filename))
+                for name in sorted(names):
+                    info = available[name]
+                    if info.is_dir():
+                        continue
+                    if info.file_size > MAX_ENTRY_BYTES:
+                        raise ValueError(f"Entry terlalu besar: {name}")
+                    with archive.open(info, "r") as src, out.open(name, "w") as dst:
+                        _copy_stream(src, dst)
+
         elif source.suffix.lower() in {".tar", ".gz", ".tgz", ".bz2", ".xz"}:
             with tarfile.open(source) as archive:
                 members = {member.name: member for member in archive.getmembers()}
@@ -60,10 +88,14 @@ def export_found_asset(
                     member = members[name]
                     if not member.isfile():
                         continue
+                    if member.size > MAX_ENTRY_BYTES:
+                        raise ValueError(f"Entry terlalu besar: {name}")
                     extracted = archive.extractfile(member)
                     if extracted is None:
                         raise ValueError(f"Entry TAR tidak dapat dibaca: {name}")
-                    out.writestr(name, extracted.read())
+                    with extracted as src, out.open(name, "w") as dst:
+                        _copy_stream(src, dst)
+
         else:
             raise ValueError("Pemilihan entry hanya didukung untuk ZIP/TAR.")
 
@@ -72,6 +104,7 @@ def export_found_asset(
             "source": source.name,
             "report": report(source),
             "selected": sorted(names) if names is not None else None,
+            "max_entry_bytes": MAX_ENTRY_BYTES,
         }
         out.writestr(
             "manifest.json",
