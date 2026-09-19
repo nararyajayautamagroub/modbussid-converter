@@ -97,16 +97,16 @@ async function loadRepository(){
   }catch(e){document.getElementById('repositoryResult').textContent=e.message;}
 }
 async function getRoblox(){
-  const u=document.getElementById('url').value;
-  document.getElementById('result').textContent='Memproses...';
+  const input=document.getElementById('url');
+  const u=input.value.trim();
+  const result=document.getElementById('result');
+  if(!u){result.textContent='Masukkan URL Roblox dulu.';return;}
+  result.textContent='Memvalidasi URL...';
   try{
-    const response=await fetch('/api/assets/roblox/url?url='+encodeURIComponent(u));
-    if(!response.ok){
-      const data=await response.json().catch(()=>({detail:'Request gagal'}));
-      throw new Error(data.detail||'Request gagal');
-    }
+    const data=await api('/api/assets/roblox/validate?url='+encodeURIComponent(u));
+    result.textContent='Asset ID '+data.asset_id+' valid. Memulai download...';
     window.location.href='/api/assets/roblox/url?url='+encodeURIComponent(u);
-  }catch(e){document.getElementById('result').textContent=e.message;}
+  }catch(e){result.textContent=e.message;}
 }
 for(const t of ['strobo','rotator','ledbar']){
   const d=document.createElement('div');
