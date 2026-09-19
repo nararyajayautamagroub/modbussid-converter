@@ -1,0 +1,1 @@
+# BUSSID Sprite Sheet\nVideo/frame to sprite-sheet workflow. Requires FFmpeg and Pillow.\n

@@ -1,0 +1,1 @@
+# ETS2 Vehicle\nETS2 truck, trailer, chassis, cabin, accessory, model, material, collision, and definition inspection.\n

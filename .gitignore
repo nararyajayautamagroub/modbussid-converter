@@ -1,15 +1,1 @@
-__pycache__/
-*.py[cod]
-.pytest_cache/
-.venv/
-venv/
-dist/
-build/
-*.egg-info/
-extracted/
-exports/
-*.blend
-*.fbx
-*.dae
-*.obj
-*.mtl
+__pycache__/\n*.py[cod]\n.venv/\n.env\n*.log\noutput/\nuploads/\nreports/\n

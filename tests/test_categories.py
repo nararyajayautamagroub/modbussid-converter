@@ -1,0 +1,1 @@
+from pathlib import Path\nfrom shared.detect import detect\n\ndef test_bussid_vehicle(): assert detect(Path('example.bussidvehicle'))=='bussid_vehicle'\n\ndef test_ets2_sii(): assert detect(Path('data.sii'))=='ets2_unit'\n
