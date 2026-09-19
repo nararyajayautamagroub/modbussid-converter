@@ -19,7 +19,7 @@ small{color:#a5adba}
 </head>
 <body>
 <h1>Game Mod Asset Lab</h1>
-<p>Inspect → cari asset → klasifikasi → export → download.</p>
+<p>Inspect → cari asset → klasifikasi → export → download. Data katalog terhubung ke repository lokal + GitHub.</p>
 
 <section>
 <h2>Upload & Inspect</h2>
@@ -54,6 +54,15 @@ small{color:#a5adba}
 <pre id="result"></pre>
 </section>
 
+<section>
+<h2>Sprite Sheet</h2>
+<p><small>Upload image sprite sheet, lalu pecah menjadi frame ZIP berdasarkan grid.</small></p>
+<input id="spriteColumns" type="number" min="1" max="64" value="4" style="width:80px">
+<input id="spriteRows" type="number" min="1" max="64" value="4" style="width:80px">
+<button onclick="extractSpriteSheet()">Extract Frames</button>
+<pre id="spriteResult"></pre>
+</section>
+
 <section><h2>Animasi Lampu</h2><div id="lights" class="grid"></div></section>
 
 <script>
@@ -74,6 +83,14 @@ async function uploadAsset(){
     document.getElementById('templatePath').value=data.path;
     document.getElementById('uploadResult').textContent=JSON.stringify(data,null,2);
   }catch(e){document.getElementById('uploadResult').textContent=e.message;}
+}
+async function extractSpriteSheet(){
+  const path=uploadedPath||document.getElementById('templatePath').value;
+  const columns=document.getElementById('spriteColumns').value;
+  const rows=document.getElementById('spriteRows').value;
+  const result=document.getElementById('spriteResult');
+  if(!path){result.textContent='Upload atau pilih file image dulu.';return;}
+  result.innerHTML='<a href="/api/sprite-sheet/extract?path='+encodeURIComponent(path)+'&columns='+encodeURIComponent(columns)+'&rows='+encodeURIComponent(rows)+'">Download frame ZIP</a>';
 }
 async function inspectUploaded(){
   const path=uploadedPath||document.getElementById('templatePath').value;
