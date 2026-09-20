@@ -10,15 +10,18 @@ from web.asset_api import router as asset_router
 from web.catalog import repository_catalog, repository_tree
 from web.template_api import router as template_router
 from web.sprite_api import router as sprite_router
+from web.scraper_api import router as scraper_router
+from shared.version import APP_VERSION, PRODUCT_NAME
 
 ROOT = Path(__file__).resolve().parent
 GENERATED = ROOT / "generated"
 GENERATED.mkdir(exist_ok=True)
 
-app = FastAPI(title="Game Mod Asset Lab", version="2.0.0")
+app = FastAPI(title=PRODUCT_NAME, version=APP_VERSION)
 app.include_router(asset_router)
 app.include_router(template_router)
 app.include_router(sprite_router)
+app.include_router(scraper_router)
 
 
 @app.get("/", tags=["web"])
@@ -59,6 +62,9 @@ def capabilities():
         "native_proprietary_game_format_decode": False,
         "encryption_drm_bypass": False,
         "repository_sync": True,
+        "scraper": True,
+        "scraper_crawl": True,
+        "version": APP_VERSION,
     }
 
 
