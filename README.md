@@ -51,6 +51,7 @@ Classifier memakai nama file berbasis token agar radio.png tidak salah dibaca se
 - POST /api/auth/logout
 - POST /api/auth/logout-all
 - PUT /api/auth/settings
+- PUT /api/auth/profile
 - PUT /api/auth/password
 - GET /api/auth/google/start
 - GET /api/auth/google/callback
@@ -134,7 +135,7 @@ Fitur v4.1:
 - Ganti password
 - Session database SQLite
 - Google Login via OpenID Connect
-- Pengaturan bahasa, tema, dan notifikasi
+- Pengaturan profil, bahasa, tema, dan notifikasi
 - 10 bahasa: Indonesia, English, Melayu, Arabic, Japanese, Korean, Chinese, Spanish, Portuguese, French
 
 Google Login tidak mengaktifkan credential secara otomatis. Simpan credential di environment, jangan di source code:
