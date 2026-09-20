@@ -13,3 +13,7 @@ Simpan hasil JSON:
     python scripts/scraper.py https://example.com --output reports/example.json
 
 Scraper memeriksa host publik, membatasi ukuran response, timeout, dan mematuhi robots.txt bila tersedia.
+
+Validation lengkap:
+
+    python scripts/check.py
