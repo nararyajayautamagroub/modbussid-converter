@@ -53,10 +53,10 @@ if (!css.includes("@media (max-width:640px)")) {
 if (!css.includes("@media (prefers-reduced-motion:reduce)")) {
   throw new Error("Reduced-motion support is missing.");
 }
-if (/<style\\b/i.test(html) || /<script\\s*>/i.test(html)) {
+if (/<style\b/i.test(html) || /<script\s*>/i.test(html)) {
   throw new Error("Inline CSS/JavaScript should not be used in rebuilt frontend.");
 }
-if (html.includes("onclick=") || /\\sstyle="/i.test(html)) {
+if (html.includes("onclick=") || /\sstyle="/i.test(html)) {
   throw new Error("Inline event handlers/style attributes should not be used in rebuilt frontend.");
 }
 if (!html.includes('PT. NARARYA JAYA UTAMA GROUB - All Right Reserved')) {
