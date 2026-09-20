@@ -154,6 +154,21 @@ Untuk deployment HTTPS:
 
 Tanpa Google credential, tombol Google Login tampil tetapi disabled. Register/login lokal tetap bekerja.
 
+## Frontend, npm & Gateway
+
+Frontend sekarang dipisah menjadi `web/index.html`, `web/styles.css`, dan `web/app.js`. Tidak ada inline CSS/JavaScript pada halaman utama. `package.json` tidak memakai dependency frontend berat agar `npm install` / `npm ci` tetap sederhana.
+
+    npm install
+    npm run check
+    npm start
+
+Gateway FastAPI tersedia di:
+
+    /api/gateway/health
+    /api/gateway/routes
+
+CI menjalankan `npm ci` + `npm run check` dan kemudian test Python.
+
 ## PWA & All Device Support
 
 Website menggunakan layout responsive untuk mobile, tablet, desktop, viewport safe-area, hamburger menu, dan installable PWA. Service worker tidak menyimpan response `/api/*` agar data akun, scraper, dan asset tidak masuk cache publik.
