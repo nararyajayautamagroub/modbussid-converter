@@ -25,8 +25,6 @@ def _lua_script(light_type: str) -> str:
     return f"""-- Game Mod Asset Lab
 -- Roblox Studio installer/preview for {light_type}.
 -- Generated from game-mod-light-animation-v1.
-local GameModAssetLabVersion = "3.0.0"
-
 local model = Instance.new("Model")
 model.Name = "GameModAssetLab_{light_type}"
 model.Parent = workspace
@@ -80,6 +78,7 @@ def export_light_package(light_type: str, target: Path, platform: str) -> Path:
     payload = {
         "platform": platform,
         "asset_type": "light_animation",
+        "version": APP_VERSION,
         "animation": animation,
     }
 
