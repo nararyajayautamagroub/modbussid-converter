@@ -103,3 +103,9 @@ Scraper berjalan pada host publik HTTP/HTTPS, memvalidasi DNS/IP publik, memerik
     python scripts/scraper.py https://example.com
     python scripts/scraper.py https://example.com --crawl --max-pages 5
     python scripts/scraper.py https://example.com --output reports/example.json
+
+## Validasi lokal v3
+
+    python scripts/check.py
+
+Perintah ini menjalankan pip check, compileall, Ruff (E9/F), dan pytest dengan warning diperlakukan sebagai error.
