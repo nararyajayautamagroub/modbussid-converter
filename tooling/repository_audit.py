@@ -47,7 +47,7 @@ def main() -> int:
     for code_root in code_roots:
         for path in code_root.rglob("*.py"):
             content = path.read_text(encoding="utf-8")
-            if "from shared." in content or "from web." in content:
+            if re.search(r"^\s*(?:from|import)\s+(?:shared|web)\.", content, re.M):
                 fail(f"legacy import remains in {path.relative_to(ROOT)}")
 
     version = (ROOT / "core/version.py").read_text(encoding="utf-8")
