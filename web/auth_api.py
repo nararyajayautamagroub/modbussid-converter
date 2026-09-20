@@ -68,6 +68,10 @@ class SettingsRequest(BaseModel):
     notifications: bool = True
 
 
+class ProfileRequest(BaseModel):
+    name: str = Field(min_length=2, max_length=100)
+
+
 class ChangePasswordRequest(BaseModel):
     current_password: str = Field(min_length=8, max_length=128)
     new_password: str = Field(min_length=8, max_length=128)
@@ -269,6 +273,20 @@ def settings(
         theme=payload.theme,
         notifications=1 if payload.notifications else 0,
     )
+    return {"user": _public_user(updated)}
+
+
+@router.put("/auth/profile")
+def update_profile(
+    request: Request,
+    payload: ProfileRequest,
+    user: dict = Depends(current_user),
+):
+    _same_origin(request)
+    name = " ".join(payload.name.strip().split())
+    if len(name) < 2:
+        raise HTTPException(status_code=400, detail="Nama terlalu pendek.")
+    updated = update_user(user["id"], name=name[:100])
     return {"user": _public_user(updated)}
 
 
