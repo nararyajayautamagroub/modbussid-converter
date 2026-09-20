@@ -1,4 +1,4 @@
-# Game Mod Asset Lab v4.0.0
+# Game Mod Asset Lab v4.1.0
 
 Web-based inspector, classifier, exporter, scraper, account system, dan download utility untuk **file/mod yang memang Anda miliki atau berwenang memprosesnya**.
 
@@ -113,13 +113,13 @@ Scraper berjalan pada host publik HTTP/HTTPS, memvalidasi DNS/IP publik, memerik
     /api/scraper/crawl?url=https%3A%2F%2Fexample.com&max_pages=5
 
 
-## CLI scraper v3
+## CLI scraper v4.1
 
     python scripts/scraper.py https://example.com
     python scripts/scraper.py https://example.com --crawl --max-pages 5
     python scripts/scraper.py https://example.com --output reports/example.json
 
-## Validasi lokal v3
+## Validasi lokal v4.1
 
     python scripts/check.py
 
@@ -127,9 +127,9 @@ Perintah ini menjalankan pip check, compileall, Ruff (E9/F), dan pytest dengan w
 
 ## Authentication & Account
 
-Fitur v4:
-- Register dengan email/password
-- Login/logout
+Fitur v4.1:
+- Register dengan email/password dan migrasi SQLite otomatis untuk schema lama
+- Login/logout dengan rate limit percobaan password
 - Logout semua session
 - Ganti password
 - Session database SQLite
