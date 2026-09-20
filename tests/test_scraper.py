@@ -43,3 +43,12 @@ def test_scraper_blocks_local_targets():
 
 def test_version():
     assert APP_VERSION == "3.0.0"
+
+
+def test_scraper_rejects_mismatched_ports():
+    import pytest
+
+    with pytest.raises(ValueError):
+        _validate_url("https://example.com:80/")
+    with pytest.raises(ValueError):
+        _validate_url("http://example.com:443/")
