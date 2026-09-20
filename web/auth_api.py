@@ -5,7 +5,6 @@ import os
 from urllib.parse import urlparse
 
 from authlib.integrations.starlette_client import OAuth
-from fastapi.responses import RedirectResponse
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field
