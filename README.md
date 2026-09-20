@@ -154,6 +154,14 @@ Untuk deployment HTTPS:
 
 Tanpa Google credential, tombol Google Login tampil tetapi disabled. Register/login lokal tetap bekerja.
 
+## Branding & Footer
+
+Website menggunakan footer resmi:
+
+`PT. NARARYA JAYA UTAMA GROUB - All Right Reserved`
+
+Repository ini saat ini berisi aplikasi web Game Mod Asset Lab dan tooling scraper; tidak ada source bot Discord/Telegram pada repo ini, jadi tidak saya pura-purakan ada. 
+
 ## Frontend, npm & Gateway
 
 Frontend sekarang dipisah menjadi `web/index.html`, `web/styles.css`, dan `web/app.js`. Tidak ada inline CSS/JavaScript pada halaman utama. `package.json` tidak memakai dependency frontend berat agar `npm install` / `npm ci` tetap sederhana.
