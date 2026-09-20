@@ -39,7 +39,7 @@ Classifier memakai nama file berbasis token agar radio.png tidak salah dibaca se
 - Download asset Roblox publik melalui endpoint resmi Asset Delivery
 - Validasi URL Roblox sebelum download
 - Web scraper publik dengan parser HTML, metadata Open Graph, JSON-LD, heading, link, image, robots.txt, batas ukuran, timeout, anti-SSRF, dan same-host crawl
-- GitHub Actions untuk dependency check, static check, compile, dan test Python 3.10-3.13
+- GitHub Actions untuk dependency check, static check, compile, unit test, runtime smoke test, dan Python 3.10-3.14
 
 ## Endpoint utama
 
@@ -123,8 +123,9 @@ Scraper berjalan pada host publik HTTP/HTTPS, memvalidasi DNS/IP publik, memerik
 ## Validasi lokal v4.2
 
     python scripts/check.py
+    python scripts/smoke.py
 
-Perintah ini menjalankan pip check, compileall, Ruff (E9/F), dan pytest dengan warning diperlakukan sebagai error.
+Perintah check menjalankan pip check, compileall, Ruff (E9/F), dan pytest dengan warning diperlakukan sebagai error. smoke.py menjalankan endpoint FastAPI utama secara in-process.
 
 ## Authentication & Account
 
