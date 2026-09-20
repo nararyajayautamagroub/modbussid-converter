@@ -24,7 +24,11 @@ jobs:
           cache: pip
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
+      - name: Verify dependency consistency
+        run: python -m pip check
       - name: Compile source
         run: python -m compileall -q bussid ets2 roblox shared web tests
+      - name: Static checks
+        run: python -m ruff check . --select E9,F
       - name: Run tests
         run: python -m pytest -q -W error
