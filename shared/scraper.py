@@ -4,7 +4,6 @@ from collections import deque
 from html.parser import HTMLParser
 import ipaddress
 import json
-from pathlib import Path
 import socket
 from urllib.error import HTTPError, URLError
 from urllib.parse import urldefrag, urljoin, urlparse, urlunparse
@@ -174,12 +173,6 @@ def _validate_public_host(host: str) -> None:
             or ip.is_reserved
         ):
             raise ValueError("Target scraper harus berupa host publik.")
-
-
-def _same_host(first: str, second: str) -> bool:
-    return (urlparse(first).hostname or "").lower() == (
-        urlparse(second).hostname or ""
-    ).lower()
 
 
 class SafeRedirectHandler(HTTPRedirectHandler):
