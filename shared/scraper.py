@@ -215,7 +215,8 @@ def _robots_allowed(url: str, user_agent: str, timeout: int) -> bool:
     )
     try:
         request = Request(robots_url, headers={"User-Agent": user_agent})
-        with urlopen(request, timeout=timeout) as response:
+        opener = build_opener(SafeRedirectHandler())
+        with opener.open(request, timeout=timeout) as response:
             content = response.read(DEFAULT_MAX_BYTES).decode(
                 response.headers.get_content_charset() or "utf-8",
                 errors="replace",
@@ -287,7 +288,7 @@ def scrape_page(
         "text": text[:10000],
     }
 
-    if content_type.startswith("text/html"):
+    if content_type.startswith("text/html") or content_type == "application/xhtml+xml":
         parser = PageParser(final_url, max_links)
         parser.feed(text)
         result.update(
