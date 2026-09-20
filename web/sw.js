@@ -24,8 +24,11 @@ self.addEventListener("fetch", event => {
   if (request.method !== "GET") return;
   const url = new URL(request.url);
 
-  // Never cache API/auth/scraper/asset responses.
-  if (url.origin === self.location.origin && url.pathname.startsWith("/api/")) {
+  // Never cache API/auth/scraper/asset responses or the service worker itself.
+  if (
+    url.origin === self.location.origin
+    && (url.pathname.startsWith("/api/") || url.pathname === "/sw.js")
+  ) {
     return;
   }
 
