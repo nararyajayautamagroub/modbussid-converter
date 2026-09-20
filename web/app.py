@@ -96,7 +96,7 @@ def capabilities():
         "encryption_drm_bypass": False,
         "repository_sync": True,
         "authentication": ["local_register", "local_login", "session_logout", "google_oauth"],
-        "settings": ["language", "theme", "notifications", "password_change"],
+        "settings": ["profile", "language", "theme", "notifications", "password_change"],
         "languages": 10,
         "pwa": True,
         "scraper": True,
