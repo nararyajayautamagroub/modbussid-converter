@@ -292,6 +292,8 @@ async def google_callback(request: Request, response: Response):
     try:
         token = await oauth.google.authorize_access_token(request)
         userinfo = token.get("userinfo")
+        if not userinfo:
+            raise ValueError("Google tidak mengembalikan OIDC userinfo.")
     except Exception as exc:
         raise HTTPException(
             status_code=400,
