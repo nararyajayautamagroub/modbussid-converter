@@ -142,6 +142,7 @@ def download(light_type: str, platform: str = "roblox"):
 app.mount("/", StaticFiles(directory=ROOT, html=False), name="web-static")
 
 
+
 @app.middleware("http")
 async def security_headers(request, call_next):
     response = await call_next(request)
