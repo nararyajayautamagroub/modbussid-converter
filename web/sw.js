@@ -32,7 +32,7 @@ self.addEventListener("fetch", event => {
   event.respondWith(
     fetch(request)
       .then(response => {
-        if (request.url.startsWith(self.location.origin)) {
+        if (request.url.startsWith(self.location.origin) && response.ok) {
           const copy = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
         }
