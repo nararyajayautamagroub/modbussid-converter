@@ -63,7 +63,7 @@ def _json_request(url: str) -> dict:
         url,
         headers={
             "Accept": "application/vnd.github+json",
-            "User-Agent": "Game-Mod-Asset-Lab/2.0",
+            "User-Agent": "Game-Mod-Asset-Lab/4.2",
         },
     )
     with urlopen(request, timeout=10) as response:
