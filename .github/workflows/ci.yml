@@ -27,7 +27,7 @@ jobs:
       - name: Verify dependency consistency
         run: python -m pip check
       - name: Compile source
-        run: python -m compileall -q bussid ets2 roblox shared web tests
+        run: python -m compileall -q bussid ets2 roblox shared web scripts tests
       - name: Static checks
         run: python -m ruff check . --select E9,F
       - name: Run tests
