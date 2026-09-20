@@ -10,6 +10,7 @@ COMMANDS = [
     [sys.executable, "-m", "compileall", "-q", "bussid", "ets2", "roblox", "scripts", "shared", "web", "tests"],
     [sys.executable, "-m", "ruff", "check", ".", "--select", "E9,F"],
     [sys.executable, "-m", "pytest", "-q", "-W", "error"],
+    [sys.executable, "scripts/smoke.py"],
 ]
 
 
