@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import hashlib
 import os
 from urllib.parse import urlparse
 
@@ -293,8 +292,6 @@ async def google_callback(request: Request, response: Response):
     try:
         token = await oauth.google.authorize_access_token(request)
         userinfo = token.get("userinfo")
-        if not userinfo:
-            userinfo = await oauth.google.userinfo(token=token)
     except Exception as exc:
         raise HTTPException(
             status_code=400,
