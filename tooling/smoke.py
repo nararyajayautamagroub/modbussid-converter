@@ -4,7 +4,12 @@ from __future__ import annotations
 import asyncio
 import os
 from pathlib import Path
+import sys
 import tempfile
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 import httpx
 
