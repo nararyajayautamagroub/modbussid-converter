@@ -14,6 +14,17 @@ GITHUB_REPO = os.getenv(
 GITHUB_API = f"https://api.github.com/repos/{GITHUB_REPO}"
 _REMOTE_CACHE: tuple[float, dict] | None = None
 CACHE_SECONDS = 15
+FOLDER_DESCRIPTIONS = {
+    "backend": "FastAPI API, authentication, scraper, catalog, gateway, and asset endpoints.",
+    "frontend": "Responsive HTML, vanilla JavaScript, CSS, and PWA files.",
+    "core": "Reusable Python domain services shared by backend, tooling, and platform adapters.",
+    "platforms": "Platform-specific adapters for BUSSID, ETS2/ATS, and Roblox.",
+    "assets": "Project asset templates and static inputs.",
+    "artifacts": "Generated exports, downloads, and runtime output.",
+    "tooling": "Validation, scraper CLI, smoke tests, and repository audit tools.",
+    "tests": "Automated test suite for backend, core services, scraper, exports, and UI.",
+    "docs": "Architecture, migration, folder descriptions, and operating documentation.",
+}
 IGNORED_LOCAL_PARTS = {"__pycache__", ".git", "uploads", "artifacts", "data"}
 
 
@@ -23,8 +34,8 @@ def _is_ignored(path: Path) -> bool:
 
 def _local_catalog() -> dict:
     categories = {}
-    for platform in ("bussid", "ets2", "roblox"):
-        platform_root = ROOT / platform
+    for platform in ("bussid", "ets2_ats", "roblox"):
+        platform_root = ROOT / "platforms" / platform
         if not platform_root.is_dir():
             continue
         categories[platform] = {}
@@ -39,7 +50,7 @@ def _local_catalog() -> dict:
                 "count": len(files),
             }
 
-    template_root = ROOT / "templates"
+    template_root = ROOT / "assets" / "templates"
     templates = (
         [
             p.relative_to(ROOT).as_posix()
@@ -55,6 +66,7 @@ def _local_catalog() -> dict:
         "repository": GITHUB_REPO,
         "categories": categories,
         "templates": templates,
+        "folder_descriptions": FOLDER_DESCRIPTIONS,
     }
 
 
@@ -63,7 +75,7 @@ def _json_request(url: str) -> dict:
         url,
         headers={
             "Accept": "application/vnd.github+json",
-            "User-Agent": "Game-Mod-Asset-Lab/4.2",
+            "User-Agent": "Game-Mod-Asset-Lab/5.0",
         },
     )
     with urlopen(request, timeout=10) as response:
@@ -161,4 +173,12 @@ def repository_tree(prefix: str = "") -> dict:
         "prefix": prefix,
         "file_count": len(files),
         "files": files,
+    }
+
+
+def repository_folders() -> dict:
+    return {
+        "repository": GITHUB_REPO,
+        "version": "5.0.0",
+        "folders": FOLDER_DESCRIPTIONS,
     }
