@@ -1,10 +1,13 @@
 from pathlib import Path
 
 
-def test_web_ui_has_green_theme_and_hamburger():
+def test_v4_ui_has_auth_settings_and_pwa():
     html = Path("web/index.html").read_text(encoding="utf-8")
-    assert "--green:#16a34a" in html
+    assert 'id="loggedOut"' in html
+    assert 'id="loggedIn"' in html
+    assert 'onclick="googleLogin()"' in html
+    assert 'id="settingsLanguage"' in html
+    assert 'id="settingsTheme"' in html
     assert 'id="menuButton"' in html
-    assert 'aria-label="Buka menu"' in html
-    assert 'class="drawer"' in html
-    assert "/api/repository/tree" in html
+    assert '/manifest.webmanifest' in html
+    assert '/sw.js' in html
