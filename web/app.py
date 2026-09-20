@@ -5,6 +5,7 @@ import secrets
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 
 from shared.auth_db import init_db
@@ -60,6 +61,9 @@ def service_worker():
 @app.get("/icon.svg", tags=["pwa"])
 def icon():
     return FileResponse(ROOT / "icon.svg", media_type="image/svg+xml")
+
+
+@app.mount("/", StaticFiles(directory=ROOT, html=False), name="web-static")
 
 
 @app.get("/api/health", tags=["system"])
