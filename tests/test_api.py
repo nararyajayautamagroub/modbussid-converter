@@ -2,7 +2,7 @@ import asyncio
 
 import httpx
 
-from web.app import app
+from backend.app import app
 
 
 def request(path: str) -> httpx.Response:
@@ -21,7 +21,7 @@ def test_health():
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "ok"
-    assert data["version"] == "4.2.0"
+    assert data["version"] == "5.0.0"
 
 
 def test_template_types():
@@ -44,7 +44,7 @@ def test_repository_catalog_contains_platforms():
     assert response.status_code == 200
     data = response.json()
     assert "bussid" in data
-    assert "ets2" in data
+    assert "ets2_ats" in data
     assert "roblox" in data
 
 
@@ -92,4 +92,13 @@ def test_frontend_assets_and_gateway():
     gateway = request("/api/gateway/health")
     assert gateway.status_code == 200
     assert gateway.json()["gateway"] == "fastapi"
-    assert gateway.json()["version"] == "4.2.0"
+    assert gateway.json()["version"] == "5.0.0"
+
+def test_repository_folder_descriptions():
+    response = request("/api/repository/folders")
+    assert response.status_code == 200
+    folders = response.json()["folders"]
+    assert folders["backend"]
+    assert folders["frontend"]
+    assert folders["core"]
+    assert folders["platforms"]

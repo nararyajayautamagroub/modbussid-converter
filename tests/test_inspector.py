@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from shared.asset_inspector import inspect_file
+from core.asset_inspector import inspect_file
 
 
 def test_inspector_metadata(tmp_path: Path):

@@ -1,7 +1,7 @@
 from pathlib import Path
 from zipfile import ZipFile
 
-from shared.asset_export import export_found_asset
+from core.asset_export import export_found_asset
 
 
 def test_zip_selected_export(tmp_path: Path):

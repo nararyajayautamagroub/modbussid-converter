@@ -1,6 +1,6 @@
 import pytest
 
-from shared.roblox_url import asset_id_from_url
+from core.roblox_url import asset_id_from_url
 
 
 @pytest.mark.parametrize(

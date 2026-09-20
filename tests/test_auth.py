@@ -6,11 +6,11 @@ import httpx
 
 def test_local_register_login_logout(monkeypatch, tmp_path: Path):
     monkeypatch.setenv("GAME_MOD_DB", str(tmp_path / "auth.db"))
-    from shared.auth_db import init_db
+    from core.auth_db import init_db
 
     init_db()
 
-    from web.app import app
+    from backend.app import app
 
     async def run():
         transport = httpx.ASGITransport(app=app)
@@ -80,7 +80,7 @@ def test_local_register_login_logout(monkeypatch, tmp_path: Path):
 
 
 def test_auth_status_and_i18n():
-    from web.app import app
+    from backend.app import app
 
     async def run():
         transport = httpx.ASGITransport(app=app)
@@ -99,7 +99,7 @@ def test_auth_status_and_i18n():
 
             health = await client.get("/api/health")
             assert health.status_code == 200
-            assert health.json()["version"] == "4.2.0"
+            assert health.json()["version"] == "5.0.0"
             feature_i18n = await client.get("/api/i18n/en")
             assert feature_i18n.json()["translations"]["asset_inspector_exporter"] == "Asset Inspector & Exporter"
 
@@ -108,7 +108,7 @@ def test_auth_status_and_i18n():
 
 def test_auth_rate_limit_helpers(monkeypatch, tmp_path: Path):
     monkeypatch.setenv("GAME_MOD_DB", str(tmp_path / "rate.db"))
-    from shared.auth_db import (
+    from core.auth_db import (
         AUTH_RATE_MAX_FAILURES,
         auth_rate_limited,
         clear_auth_failures,
@@ -128,7 +128,7 @@ def test_auth_rate_limit_helpers(monkeypatch, tmp_path: Path):
 
 def test_registration_rate_limit_helpers(monkeypatch, tmp_path: Path):
     monkeypatch.setenv("GAME_MOD_DB", str(tmp_path / "register-rate.db"))
-    from shared.auth_db import (
+    from core.auth_db import (
         AUTH_RATE_MAX_FAILURES,
         auth_rate_limited,
         clear_auth_failures,

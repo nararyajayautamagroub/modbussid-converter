@@ -1,0 +1,19 @@
+{
+  "name": "Game Mod Asset Lab",
+  "short_name": "Asset Lab",
+  "description": "Game Mod Asset Lab v5.0.0",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#16a34a",
+  "lang": "id",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

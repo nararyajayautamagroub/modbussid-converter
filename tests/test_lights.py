@@ -1,6 +1,6 @@
 import pytest
 
-from shared.light_animation import build_animation
+from core.light_animation import build_animation
 
 
 def test_light_types():

@@ -3,7 +3,7 @@ from zipfile import ZipFile
 
 from PIL import Image
 
-from shared.image_tools import extract_sprites, inspect_image
+from core.image_tools import extract_sprites, inspect_image
 
 
 def test_image_info(tmp_path: Path):

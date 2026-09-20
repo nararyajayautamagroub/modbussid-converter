@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from shared.template_classifier import classify_template
+from core.template_classifier import classify_template
 
 
 def test_template_defaults(tmp_path: Path):

@@ -1,5 +1,5 @@
-from shared.scraper import PageParser, _validate_url, crawl_site
-from shared.version import APP_VERSION
+from core.scraper import PageParser, _validate_url, crawl_site
+from core.version import APP_VERSION
 
 
 def test_scraper_parser_extracts_metadata():
@@ -42,7 +42,7 @@ def test_scraper_blocks_local_targets():
 
 
 def test_version():
-    assert APP_VERSION == "4.2.0"
+    assert APP_VERSION == "5.0.0"
 
 
 def test_scraper_rejects_mismatched_ports():

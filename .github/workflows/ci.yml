@@ -28,17 +28,17 @@ jobs:
           cache: npm
       - name: Install npm dependencies
         run: npm ci
-      - name: Verify frontend
+      - name: Verify rebuilt frontend and repository layout
         run: npm run check
       - name: Install Python dependencies
         run: python -m pip install -r requirements.txt
       - name: Verify dependency consistency
         run: python -m pip check
       - name: Compile source
-        run: python -m compileall -q bussid ets2 roblox shared web scripts tests
+        run: python -m compileall -q platforms core backend tooling tests
       - name: Static checks
         run: python -m ruff check . --select E9,F
       - name: Run tests
         run: python -m pytest -q -W error
       - name: Runtime smoke test
-        run: python scripts/smoke.py
+        run: python tooling/smoke.py

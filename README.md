@@ -1,182 +1,128 @@
-# Game Mod Asset Lab v4.2.0
+# Game Mod Asset Lab v5.0.0
 
-Web-based inspector, classifier, exporter, scraper, account system, dan download utility untuk **file/mod yang memang Anda miliki atau berwenang memprosesnya**.
+Game Mod Asset Lab adalah aplikasi web untuk inspeksi, klasifikasi, packaging, export, scraper publik, dan pengelolaan asset yang memang dimiliki atau memang boleh diproses oleh pengguna.
 
-## Alur utama
+## Struktur v5
 
-**Upload / pilih asset → Inspect → temukan entry → klasifikasi template → Export → Download**
+| Folder | Deskripsi |
+|---|---|
+| `backend/` | FastAPI application, API routes, gateway, auth, catalog, scraper, dan asset API. |
+| `frontend/` | HTML, vanilla JavaScript, CSS responsive, PWA manifest, service worker, dan icon. |
+| `core/` | Logic inti yang dipakai bersama backend, tooling, tests, dan adapter platform. |
+| `platforms/` | Adapter BUSSID, ETS2/ATS, dan Roblox. |
+| `assets/` | Template dan input asset project-level. |
+| `artifacts/` | Output runtime seperti generated export dan download artifact. |
+| `tooling/` | Scraper CLI, smoke test, frontend smoke, repository audit, dan check pipeline. |
+| `tests/` | Test otomatis backend, auth, exporter, image, scraper, dan UI. |
+| `docs/` | Dokumentasi arsitektur, deskripsi folder, dan migrasi v5. |
 
-## Platform dan kategori
+## Fitur aktif
 
-- BUSSID: Vehicle, Map, Kodename, Sprite Sheet, Lights
-- ETS2/ATS: Vehicle, Map
-- Roblox: Vehicle, Lights, Export
+- Asset inspector dengan SHA-256 dan ZIP/TAR inspection.
+- Selective export dan manifest JSON.
+- Template classifier AO, Texture, dan Kaca/XOR.
+- Sprite Sheet inspect dan frame extraction.
+- Strobo, Rotator, dan LED Bar animation package.
+- Public Roblox Asset Delivery melalui endpoint resmi.
+- Register, login, logout, logout-all, profile, settings, dan password change.
+- Google Login melalui OpenID Connect jika credential dikonfigurasi.
+- 10 bahasa.
+- Responsive mobile, tablet, desktop, dan PWA.
+- Repository catalog, tree, dan folder description endpoint.
+- Public web scraper dengan anti-SSRF dan same-host crawl.
 
-## Template
+## Website
 
-- **AO**: Ambient Occlusion
-- **Texture**: texture umum
-- **Kaca/XOR**: template kaca / glass
+Frontend utama:
 
-Classifier memakai nama file berbasis token agar radio.png tidak salah dibaca sebagai AO hanya karena mengandung huruf ao.
+    frontend/index.html
+    frontend/app.js
+    frontend/styles.css
 
-## Fitur yang sudah aktif
+Backend entrypoint:
 
-- Deteksi file dan SHA-256
-- Deteksi container ZIP/TAR
-- Daftar isi archive
-- Export seluruh file atau entry terpilih ke ZIP
-- Manifest JSON pada hasil export
-- Upload file ke workspace repository dengan batas 100 MB
-- Inspeksi hanya pada path yang berada di dalam repository
-- Repository catalog lokal
-- Sinkronisasi catalog ke GitHub repository publik secara berkala
-- Endpoint health dan capabilities
-- Animasi data untuk Strobo, Rotator, LED Bar
-- Paket Roblox lampu berisi JSON + script Lua untuk Roblox Studio
-- Inspect ukuran/format image dan ekstraksi Sprite Sheet menjadi frame ZIP
-- Near-real-time repository tree dengan default branch, commit SHA, tanggal commit, dan filter prefix
-- Download asset Roblox publik melalui endpoint resmi Asset Delivery
-- Validasi URL Roblox sebelum download
-- Web scraper publik dengan parser HTML, metadata Open Graph, JSON-LD, heading, link, image, robots.txt, batas ukuran, timeout, anti-SSRF, dan same-host crawl
-- GitHub Actions untuk dependency check, static check, compile, unit test, runtime smoke test, dan Python 3.10-3.14
+    backend/app.py
 
-## Endpoint utama
+Footer resmi:
 
-- GET /api/health
-- GET /api/auth/status
-- GET /api/auth/me
-- POST /api/auth/register
-- POST /api/auth/login
-- POST /api/auth/logout
-- POST /api/auth/logout-all
-- PUT /api/auth/settings
-- PUT /api/auth/profile
-- PUT /api/auth/password
-- GET /api/auth/google/start
-- GET /api/auth/google/callback
-- GET /api/i18n
-- GET /api/i18n/{language}
-- GET /manifest.webmanifest
-- GET /sw.js
-- GET /icon.svg
-- GET /api/capabilities
-- GET /api/categories
-- GET /api/repository
-- POST /api/assets/upload
-- GET /api/assets/inspect?path=...
-- GET /api/assets/export?path=...
-- GET /api/templates/types
-- GET /api/templates/classify?path=...
-- GET /api/assets/roblox/validate?url=...
-- GET /api/assets/roblox/url?url=...
-- GET /api/sprite-sheet/inspect?path=...
-- GET /api/sprite-sheet/extract?path=...&columns=4&rows=4
-- GET /api/repository/tree?prefix=...
-- GET /api/scraper/fetch?url=...
-- GET /api/scraper/crawl?url=...&max_pages=...
-- GET /api/lights/{strobo|rotator|ledbar}
-- GET /api/lights/{strobo|rotator|ledbar}/download?platform=...
+**PT. NARARYA JAYA UTAMA GROUB - All Right Reserved**
 
-## Akurasi data repository
+## API utama
 
-Website membaca struktur repository lokal saat runtime. Endpoint /api/repository juga mencoba membaca tree branch main dari GitHub dan mengembalikan commit SHA, jumlah file, daftar path, serta status sinkronisasi.
+    GET /api/health
+    GET /api/gateway/health
+    GET /api/gateway/routes
+    GET /api/repository
+    GET /api/repository/tree?prefix=...
+    GET /api/repository/folders
 
-Jika GitHub tidak bisa diakses, data lokal tetap dipakai sehingga website tidak mati hanya karena internet sedang bermain petak umpet.
+Authentication:
 
-## Batas penting
+    GET /api/auth/status
+    POST /api/auth/register
+    POST /api/auth/login
+    POST /api/auth/logout
+    POST /api/auth/logout-all
+    PUT /api/auth/settings
+    PUT /api/auth/profile
+    PUT /api/auth/password
 
-Project ini **tidak** membypass password, enkripsi, DRM, signature, private asset, atau access control.
+Scraper:
 
-Untuk format game proprietary seperti beberapa format internal ETS2/BUSSID/Roblox, project hanya melaporkan metadata, mendeteksi container yang dikenali, atau memproses format yang didukung. Parser native penuh harus ditambahkan berdasarkan format, dokumentasi, atau sample yang sah.
+    GET /api/scraper/fetch?url=...
+    GET /api/scraper/crawl?url=...&max_pages=...
 
-Exporter Roblox lampu menghasilkan **JSON + script Lua Roblox Studio**. Output tersebut bukan file native .rbxm/.rbxmx.
+## Scraper CLI
 
-## Jalankan
+    python tooling/scraper.py https://example.com
+    python tooling/scraper.py https://example.com --crawl --max-pages 5
+    python tooling/scraper.py https://example.com --output reports/example.json
 
-    python -m pip install -r requirements.txt
-    uvicorn web.app:app --reload
+Scraper hanya ditujukan untuk resource publik dan tidak melewati login, paywall, private resource, DRM, atau access control.
 
-Buka http://127.0.0.1:8000.
-
-## Validasi
-
-    python -m compileall -q bussid ets2 roblox shared web tests
-    python -m pytest -q -W error
-
-## Scraper
-
-Scraper berjalan pada host publik HTTP/HTTPS, memvalidasi DNS/IP publik, memeriksa robots.txt bila tersedia, membatasi response sampai 20 MB per request, timeout 60 detik maksimum, dan crawl hanya pada host yang sama. Ini ditujukan untuk data publik, bukan untuk melewati login, paywall, private resource, atau access control.
-
-### Contoh
-
-    /api/scraper/fetch?url=https%3A%2F%2Fexample.com
-    /api/scraper/crawl?url=https%3A%2F%2Fexample.com&max_pages=5&max_bytes=5242880
-
-
-## CLI scraper v4.2
-
-    python scripts/scraper.py https://example.com
-    python scripts/scraper.py https://example.com --crawl --max-pages 5
-    python scripts/scraper.py https://example.com --output reports/example.json
-
-## Validasi lokal v4.2
-
-    python scripts/check.py
-    python scripts/smoke.py
-
-Perintah check menjalankan pip check, compileall, Ruff (E9/F), dan pytest dengan warning diperlakukan sebagai error. smoke.py menjalankan endpoint FastAPI utama secara in-process.
-
-## Authentication & Account
-
-Fitur v4.2:
-- Register dengan email/password dan migrasi SQLite otomatis untuk schema lama
-- Login/logout dengan rate limit percobaan password
-- Logout semua session
-- Ganti password
-- Session database SQLite
-- Google Login via OpenID Connect
-- Pengaturan profil, bahasa, tema, dan notifikasi
-- 10 bahasa: Indonesia, English, Melayu, Arabic, Japanese, Korean, Chinese, Spanish, Portuguese, French
-
-Google Login tidak mengaktifkan credential secara otomatis. Simpan credential di environment, jangan di source code:
-
-    GOOGLE_CLIENT_ID=...
-    GOOGLE_CLIENT_SECRET=...
-    GOOGLE_REDIRECT_URI=https://domain-anda.example/api/auth/google/callback
-
-Di Google Cloud Console, gunakan OAuth Client tipe **Web application** dan daftarkan redirect URI yang sama persis dengan `GOOGLE_REDIRECT_URI`.
-
-Untuk deployment HTTPS:
-
-    COOKIE_SECURE=1
-    SESSION_SECRET=<random-secret-panjang>
-
-Tanpa Google credential, tombol Google Login tampil tetapi disabled. Register/login lokal tetap bekerja.
-
-## Branding & Footer
-
-Website menggunakan footer resmi:
-
-`PT. NARARYA JAYA UTAMA GROUB - All Right Reserved`
-
-Repository ini saat ini berisi aplikasi web Game Mod Asset Lab dan tooling scraper; tidak ada source bot Discord/Telegram pada repo ini, jadi tidak saya pura-purakan ada. 
-
-## Frontend, npm & Gateway
-
-Frontend sekarang dipisah menjadi `web/index.html`, `web/styles.css`, dan `web/app.js`. Tidak ada inline CSS/JavaScript pada halaman utama. `package.json` tidak memakai dependency frontend berat agar `npm install` / `npm ci` tetap sederhana.
+## Instalasi
 
     npm install
     npm run check
     npm start
 
-Gateway FastAPI tersedia di:
+Python validation:
 
-    /api/gateway/health
-    /api/gateway/routes
+    python -m pip install -r requirements.txt
+    python tooling/check.py
 
-CI menjalankan `npm ci` + `npm run check` dan kemudian test Python.
+Local server:
 
-## PWA & All Device Support
+    http://127.0.0.1:8000
 
-Website menggunakan layout responsive untuk mobile, tablet, desktop, viewport safe-area, hamburger menu, dan installable PWA. Service worker tidak menyimpan response `/api/*` agar data akun, scraper, dan asset tidak masuk cache publik.
+## Google Login
+
+    GOOGLE_CLIENT_ID=...
+    GOOGLE_CLIENT_SECRET=...
+    GOOGLE_REDIRECT_URI=https://domain.example/api/auth/google/callback
+
+Untuk HTTPS:
+
+    COOKIE_SECURE=1
+    SESSION_SECRET=<random-secret-panjang>
+
+Jangan menyimpan secret di repository.
+
+## Validation
+
+    npm run frontend:smoke
+    python tooling/repository_audit.py
+    python tooling/smoke.py
+    python -m pytest -q -W error
+
+CI menjalankan npm check, pip check, compileall, Ruff, pytest, dan runtime smoke.
+
+## Batas keamanan
+
+Project tidak membypass password, enkripsi, DRM, signature, private asset, atau access control.
+
+Untuk format proprietary, tool hanya mengklaim kemampuan yang benar-benar tersedia. Export ZIP tidak berarti format native game telah dikonversi.
+
+## Version
+
+Game Mod Asset Lab v5.0.0
