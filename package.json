@@ -1,0 +1,17 @@
+{
+  "name": "game-mod-asset-lab",
+  "version": "4.2.0",
+  "private": true,
+  "description": "Responsive vanilla JavaScript frontend for Game Mod Asset Lab",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "scripts": {
+    "check": "npm run syntax && npm run frontend:smoke",
+    "syntax": "node --check web/app.js",
+    "frontend:smoke": "node scripts/frontend-smoke.mjs",
+    "start": "python -m uvicorn web.app:app",
+    "dev": "python -m uvicorn web.app:app --reload"
+  }
+}
