@@ -2,7 +2,7 @@ const FALLBACK_LANGS=[
   ["id","Bahasa Indonesia"],["en","English"],["ms","Bahasa Melayu"],["ar","العربية"],["ja","日本語"],
   ["ko","한국어"],["zh","简体中文"],["es","Español"],["pt","Português"],["fr","Français"]
 ];
-let uploadedPath="", currentUser=null, translations={};
+let uploadedPath="", currentUser=null, translations={}, gateway=null;
 
 const I18N_FALLBACK={
   id:{menu:"Menu utama",account:"Akun",login:"Login",register:"Register",logout:"Logout",settings:"Pengaturan",language:"Bahasa",theme:"Tema",notifications:"Notifikasi",save:"Simpan",email:"Email",password:"Password",name:"Nama",login_google:"Login dengan Google",change_password:"Ganti password",current_password:"Password lama",new_password:"Password baru",create_account:"Buat akun",logged_in_as:"Login sebagai",light:"Terang",dark:"Gelap",system:"Sistem",language_count:"10 bahasa tersedia"},
@@ -20,10 +20,22 @@ const I18N_FALLBACK={
 function byId(id){return document.getElementById(id)}
 function setText(id,value){byId(id).textContent=value}
 async function api(url,options={}){
-  const response=await fetch(url,{credentials:"same-origin",...options});
-  const data=await response.json().catch(()=>({detail:response.statusText||"Request gagal"}));
-  if(!response.ok) throw new Error(data.detail||"Request gagal");
-  return data;
+  const controller=new AbortController();
+  const timeoutMs=Number(options.timeoutMs||30000);
+  const timer=window.setTimeout(()=>controller.abort(),timeoutMs);
+  const requestOptions={...options,signal:controller.signal};
+  delete requestOptions.timeoutMs;
+  try{
+    const response=await fetch(url,{credentials:"same-origin",...requestOptions});
+    const data=await response.json().catch(()=>({detail:response.statusText||"Request gagal"}));
+    if(!response.ok) throw new Error(data.detail||"Request gagal");
+    return data;
+  }catch(error){
+    if(error.name==="AbortError") throw new Error("Request timeout.");
+    throw error;
+  }finally{
+    window.clearTimeout(timer);
+  }
 }
 function languageOptions(select,selected){
   select.innerHTML="";
@@ -67,6 +79,8 @@ function saveLocalSettings(){
 }
 async function loadAuthStatus(){
   const data=await api("/api/auth/status");
+  gateway=await api("/api/gateway/health");
+  if(gateway.version!==(await api("/api/capabilities")).version) throw new Error("Gateway dan backend berbeda versi.");
   const langs=data.languages?.length?data.languages:FALLBACK_LANGS.map(x=>x[0]);
   const options=FALLBACK_LANGS.filter(([code])=>langs.includes(code));
   FALLBACK_LANGS.splice(0,FALLBACK_LANGS.length,...options);
