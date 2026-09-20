@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 
 from authlib.integrations.starlette_client import OAuth
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field
 
 from shared.auth_db import (
@@ -337,10 +338,6 @@ async def google_callback(request: Request, response: Response):
 
     update_login(user["id"])
     token_value = create_session(user["id"])
-    _set_session(response, token_value)
-
-    return Response(
-        content='<script>window.location.replace("/#account");</script>',
-        media_type="text/html",
-        headers={"Cache-Control": "no-store"},
-    )
+    redirect = RedirectResponse(url="/#account", status_code=302, headers={"Cache-Control": "no-store"})
+    _set_session(redirect, token_value)
+    return redirect
