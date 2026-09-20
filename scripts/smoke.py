@@ -23,7 +23,10 @@ async def run_smoke() -> None:
                 ("/api/health", 200),
                 ("/api/capabilities", 200),
                 ("/api/auth/status", 200),
+                ("/api/gateway/health", 200),
                 ("/api/i18n/en", 200),
+                ("/styles.css", 200),
+                ("/app.js", 200),
                 ("/manifest.webmanifest", 200),
                 ("/sw.js", 200),
                 (
@@ -40,6 +43,11 @@ async def run_smoke() -> None:
                         f"{response.status_code} != {expected}"
                     )
 
+            health = (await client.get("/api/health")).json()
+            if health["version"] != "4.2.0":
+                raise RuntimeError("Backend version is not v4.2.0.")
+
+            gateway = (await client.get("/api/gateway/health")).json()
             capabilities = (await client.get("/api/capabilities")).json()
             if capabilities["languages"] != 10:
                 raise RuntimeError("Expected exactly 10 supported languages.")
