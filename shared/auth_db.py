@@ -206,12 +206,21 @@ def hash_password(password: str, salt_hex: str | None = None) -> tuple[str, str]
 
 
 def verify_password(password: str, salt_hex: str, expected_hash: str) -> bool:
-    candidate = hashlib.pbkdf2_hmac(
-        "sha256",
-        password.encode("utf-8"),
-        bytes.fromhex(salt_hex),
-        PBKDF2_ITERATIONS,
-    ).hex()
+    try:
+        salt = bytes.fromhex(salt_hex)
+    except (TypeError, ValueError):
+        return False
+    if not salt or not expected_hash:
+        return False
+    try:
+        candidate = hashlib.pbkdf2_hmac(
+            "sha256",
+            password.encode("utf-8"),
+            salt,
+            PBKDF2_ITERATIONS,
+        ).hex()
+    except (TypeError, ValueError):
+        return False
     return secrets.compare_digest(candidate, expected_hash)
 
 
