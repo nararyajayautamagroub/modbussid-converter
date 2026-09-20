@@ -42,7 +42,7 @@ def test_scraper_blocks_local_targets():
 
 
 def test_version():
-    assert APP_VERSION == "4.1.0"
+    assert APP_VERSION == "4.2.0"
 
 
 def test_scraper_rejects_mismatched_ports():
