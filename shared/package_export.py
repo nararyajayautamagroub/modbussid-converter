@@ -5,6 +5,7 @@ import zipfile
 from pathlib import Path
 
 from .light_animation import build_animation, to_dict
+from .version import APP_VERSION
 
 
 def _lua_script(light_type: str) -> str:
@@ -24,7 +25,7 @@ def _lua_script(light_type: str) -> str:
     return f"""-- Game Mod Asset Lab
 -- Roblox Studio installer/preview for {light_type}.
 -- Generated from game-mod-light-animation-v1.
-local TweenService = game:GetService("TweenService")
+local GameModAssetLabVersion = "3.0.0"
 
 local model = Instance.new("Model")
 model.Name = "GameModAssetLab_{light_type}"
