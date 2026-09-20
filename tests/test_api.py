@@ -78,3 +78,18 @@ def test_crawl_route_rejects_invalid_limits():
         "/api/scraper/crawl?url=https%3A%2F%2Fexample.com%2F&max_bytes=0"
     )
     assert response.status_code == 400
+
+
+def test_frontend_assets_and_gateway():
+    css = request("/styles.css")
+    assert css.status_code == 200
+    assert css.headers["content-type"].startswith("text/css")
+
+    js = request("/app.js")
+    assert js.status_code == 200
+    assert "function api" in js.text
+
+    gateway = request("/api/gateway/health")
+    assert gateway.status_code == 200
+    assert gateway.json()["gateway"] == "fastapi"
+    assert gateway.json()["version"] == "4.2.0"
