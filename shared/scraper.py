@@ -21,7 +21,7 @@ DEFAULT_MAX_BYTES = 5 * 1024 * 1024
 DEFAULT_MAX_LINKS = 100
 DEFAULT_MAX_PAGES = 10
 DEFAULT_TIMEOUT = 10
-USER_AGENT = "Game-Mod-Asset-Lab/3.0"
+USER_AGENT = "Game-Mod-Asset-Lab/4.1"
 
 
 class PageParser(HTMLParser):
