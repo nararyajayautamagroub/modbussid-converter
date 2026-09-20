@@ -82,8 +82,6 @@ async function loadAuthStatus(){
   capabilities=await api("/api/capabilities");
   gateway=await api("/api/gateway/health");
   if(!gateway || gateway.version!==capabilities.version) throw new Error("Gateway dan backend berbeda versi.");
-  gateway=await api("/api/gateway/health");
-  if(gateway.version!==(await api("/api/capabilities")).version) throw new Error("Gateway dan backend berbeda versi.");
   const langs=data.languages?.length?data.languages:FALLBACK_LANGS.map(x=>x[0]);
   const options=FALLBACK_LANGS.filter(([code])=>langs.includes(code));
   FALLBACK_LANGS.splice(0,FALLBACK_LANGS.length,...options);
