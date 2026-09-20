@@ -15,8 +15,9 @@ from web.catalog import repository_catalog, repository_tree
 from web.template_api import router as template_router
 from web.sprite_api import router as sprite_router
 from web.scraper_api import router as scraper_router
-from web.auth_api import router as auth_router
+from web.auth_api import GOOGLE_CONFIGURED, router as auth_router
 from shared.version import APP_VERSION, PRODUCT_NAME
+from web.i18n_api import router as i18n_router
 
 ROOT = Path(__file__).resolve().parent
 GENERATED = ROOT / "generated"
@@ -37,6 +38,7 @@ app.include_router(template_router)
 app.include_router(sprite_router)
 app.include_router(scraper_router)
 app.include_router(auth_router)
+app.include_router(i18n_router)
 
 
 @app.get("/", tags=["web"])
@@ -56,7 +58,7 @@ def service_worker():
 
 @app.get("/api/health", tags=["system"])
 def health():
-    return {"status": "ok", "service": "game-mod-asset-lab", "version": app.version}
+    return {"status": "ok", "service": "game-mod-asset-lab", "version": app.version, "google_login": GOOGLE_CONFIGURED}
 
 
 @app.get("/api/categories", tags=["catalog"])
