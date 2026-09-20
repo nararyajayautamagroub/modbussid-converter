@@ -1,4 +1,4 @@
-const CACHE_NAME = "game-mod-asset-lab-v4";
+const CACHE_NAME = "game-mod-asset-lab-v4.2";
 const SHELL = ["/", "/manifest.webmanifest"];
 
 self.addEventListener("install", event => {
