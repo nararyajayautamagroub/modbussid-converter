@@ -47,7 +47,9 @@ async def run_smoke() -> None:
             if health["version"] != "5.0.0":
                 raise RuntimeError("Backend version is not v5.0.0.")
 
-            gateway = (await client.get("/api/gateway/health")).json()
+            gateway_response = await client.get("/api/gateway/health")
+            if gateway_response.status_code != 200:
+                raise RuntimeError("Gateway health endpoint is unavailable.")
             capabilities = (await client.get("/api/capabilities")).json()
             if capabilities["languages"] != 10:
                 raise RuntimeError("Expected exactly 10 supported languages.")
