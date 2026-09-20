@@ -28,6 +28,7 @@ for (const marker of requiredHtml) {
 
 const requiredJs = [
   "/api/auth/status",
+  "/api/gateway/health",
   "/api/auth/register",
   "/api/auth/login",
   "/api/auth/google/start",
