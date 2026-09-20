@@ -13,6 +13,8 @@ ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_DB = ROOT / "data" / "app.db"
 PBKDF2_ITERATIONS = 600_000
 SESSION_DAYS = 30
+AUTH_RATE_WINDOW_SECONDS = 300
+AUTH_RATE_MAX_FAILURES = 8
 
 
 def _db_path() -> Path:
@@ -75,12 +77,101 @@ def init_db() -> None:
 
             CREATE INDEX IF NOT EXISTS idx_sessions_expiry
             ON sessions(expires_at);
+
+            CREATE TABLE IF NOT EXISTS auth_attempts (
+                rate_key TEXT PRIMARY KEY,
+                window_started_at INTEGER NOT NULL,
+                failures INTEGER NOT NULL
+            );
+
+            CREATE INDEX IF NOT EXISTS idx_auth_attempts_window
+            ON auth_attempts(window_started_at);
             """
+        )
+        existing_columns = {
+            row[1] for row in conn.execute("PRAGMA table_info(users)").fetchall()
+        }
+        migrations = {
+            "password_hash": "TEXT",
+            "password_salt": "TEXT",
+            "google_sub": "TEXT",
+            "avatar_url": "TEXT",
+            "language": "TEXT NOT NULL DEFAULT 'id'",
+            "theme": "TEXT NOT NULL DEFAULT 'light'",
+            "notifications": "INTEGER NOT NULL DEFAULT 1",
+            "email_verified": "INTEGER NOT NULL DEFAULT 0",
+            "created_at": "TEXT NOT NULL DEFAULT ''",
+            "last_login_at": "TEXT",
+        }
+        for column, definition in migrations.items():
+            if column not in existing_columns:
+                conn.execute(f"ALTER TABLE users ADD COLUMN {column} {definition}")
+        conn.execute(
+            "CREATE UNIQUE INDEX IF NOT EXISTS idx_users_google_sub "
+            "ON users(google_sub) WHERE google_sub IS NOT NULL"
+        )
+        now = _utc_now()
+        conn.execute(
+            "UPDATE users SET created_at = ? WHERE created_at IS NULL OR created_at = ''",
+            (now,),
         )
         conn.execute(
             "DELETE FROM sessions WHERE expires_at <= ?",
             (_utc_now(),),
         )
+        conn.execute(
+            "DELETE FROM auth_attempts WHERE window_started_at < ?",
+            (_auth_now() - AUTH_RATE_WINDOW_SECONDS,),
+        )
+
+
+def _auth_now() -> int:
+    return int(datetime.now(timezone.utc).timestamp())
+
+
+def auth_rate_limited(rate_key: str) -> int:
+    """Return retry-after seconds, or 0 when the key is allowed."""
+    now = _auth_now()
+    with connection() as conn:
+        row = conn.execute(
+            "SELECT window_started_at, failures FROM auth_attempts WHERE rate_key = ?",
+            (rate_key,),
+        ).fetchone()
+        if row is None:
+            return 0
+        started = int(row[0])
+        failures = int(row[1])
+        elapsed = now - started
+        if elapsed >= AUTH_RATE_WINDOW_SECONDS:
+            conn.execute("DELETE FROM auth_attempts WHERE rate_key = ?", (rate_key,))
+            return 0
+        if failures < AUTH_RATE_MAX_FAILURES:
+            return 0
+        return max(1, AUTH_RATE_WINDOW_SECONDS - elapsed)
+
+
+def record_auth_failure(rate_key: str) -> None:
+    now = _auth_now()
+    with connection() as conn:
+        row = conn.execute(
+            "SELECT window_started_at, failures FROM auth_attempts WHERE rate_key = ?",
+            (rate_key,),
+        ).fetchone()
+        if row is None or now - int(row[0]) >= AUTH_RATE_WINDOW_SECONDS:
+            conn.execute(
+                "INSERT OR REPLACE INTO auth_attempts(rate_key, window_started_at, failures) VALUES(?,?,1)",
+                (rate_key, now),
+            )
+        else:
+            conn.execute(
+                "UPDATE auth_attempts SET failures = failures + 1 WHERE rate_key = ?",
+                (rate_key,),
+            )
+
+
+def clear_auth_failures(rate_key: str) -> None:
+    with connection() as conn:
+        conn.execute("DELETE FROM auth_attempts WHERE rate_key = ?", (rate_key,))
 
 
 def normalize_email(email: str) -> str:
