@@ -198,11 +198,11 @@ def _read_response(response, max_bytes: int) -> bytes:
     content_length = response.headers.get("Content-Length")
     if content_length:
         try:
-            if int(content_length) > max_bytes:
-                raise ValueError("Response scraper melebihi batas ukuran.")
-        except ValueError as exc:
-            if "melebihi" in str(exc):
-                raise
+            declared_length = int(content_length)
+        except (TypeError, ValueError):
+            declared_length = None
+        if declared_length is not None and declared_length > max_bytes:
+            raise ValueError("Response scraper melebihi batas ukuran.")
     chunks = bytearray()
     while True:
         chunk = response.read(min(1024 * 1024, max_bytes - len(chunks) + 1))
