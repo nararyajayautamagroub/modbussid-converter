@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import zipfile
+from io import BytesIO
 from pathlib import Path
 
 from PIL import Image, UnidentifiedImageError
@@ -65,8 +66,6 @@ def extract_sprites(
                             (left, top, left + frame_width, top + frame_height)
                         )
                         name = f"frame_{frame_number:04d}.png"
-                        from io import BytesIO
-
                         buffer = BytesIO()
                         frame.save(buffer, format="PNG")
                         archive.writestr(name, buffer.getvalue())
