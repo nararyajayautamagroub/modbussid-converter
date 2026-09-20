@@ -10,7 +10,8 @@ def test_v50_ui_has_auth_settings_and_pwa():
     assert 'id="settingsTheme"' in html
     assert 'id="menuButton"' in html
     assert '/manifest.webmanifest' in html
-    assert '/sw.js' in html
+    app_js = Path("frontend/app.js").read_text(encoding="utf-8")
+    assert 'navigator.serviceWorker.register("/sw.js")' in app_js
     assert 'PT. NARARYA JAYA UTAMA GROUB - All Right Reserved' in html
 
     sw = Path("frontend/sw.js").read_text(encoding="utf-8")
