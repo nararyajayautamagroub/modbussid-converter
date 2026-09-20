@@ -321,8 +321,23 @@ FEATURE_TEXTS = {
 }
 
 
+
+ACCOUNT_EXTRA_TEXTS = {
+    "id": {"logout_all": "Logout Semua"},
+    "en": {"logout_all": "Log out all"},
+    "ms": {"logout_all": "Log keluar semua"},
+    "ar": {"logout_all": "تسجيل الخروج من جميع الجلسات"},
+    "ja": {"logout_all": "すべてログアウト"},
+    "ko": {"logout_all": "모든 세션 로그아웃"},
+    "zh": {"logout_all": "退出所有会话"},
+    "es": {"logout_all": "Cerrar todas las sesiones"},
+    "pt": {"logout_all": "Sair de todas as sessões"},
+    "fr": {"logout_all": "Déconnecter toutes les sessions"},
+}
+
 def get_translations(language: str) -> dict:
     selected = TEXTS.get(language, TEXTS["id"])
     merged = dict(selected)
     merged.update(FEATURE_TEXTS.get(language, {}))
+    merged.update(ACCOUNT_EXTRA_TEXTS.get(language, {}))
     return merged
