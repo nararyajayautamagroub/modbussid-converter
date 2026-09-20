@@ -135,6 +135,10 @@ def _validate_url(url: str) -> str:
         raise ValueError("Hostname URL tidak ditemukan.")
     if parsed.port not in {None, 80, 443}:
         raise ValueError("Port custom tidak diizinkan.")
+    if parsed.scheme == "https" and parsed.port == 80:
+        raise ValueError("HTTPS harus menggunakan port 443 atau port default.")
+    if parsed.scheme == "http" and parsed.port == 443:
+        raise ValueError("HTTP harus menggunakan port 80 atau port default.")
     if len(raw) > 2048:
         raise ValueError("URL terlalu panjang.")
 
