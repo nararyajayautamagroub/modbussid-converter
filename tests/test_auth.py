@@ -95,10 +95,11 @@ def test_auth_status_and_i18n():
             i18n = await client.get("/api/i18n/en")
             assert i18n.status_code == 200
             assert i18n.json()["translations"]["login"] == "Login"
+            assert "logout_all" in i18n.json()["translations"]
 
             health = await client.get("/api/health")
             assert health.status_code == 200
-            assert health.json()["version"] == "4.1.0"
+            assert health.json()["version"] == "4.2.0"
             feature_i18n = await client.get("/api/i18n/en")
             assert feature_i18n.json()["translations"]["asset_inspector_exporter"] == "Asset Inspector & Exporter"
 
