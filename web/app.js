@@ -79,6 +79,9 @@ function saveLocalSettings(){
 }
 async function loadAuthStatus(){
   const data=await api("/api/auth/status");
+  capabilities=await api("/api/capabilities");
+  gateway=await api("/api/gateway/health");
+  if(!gateway || gateway.version!==capabilities.version) throw new Error("Gateway dan backend berbeda versi.");
   gateway=await api("/api/gateway/health");
   if(gateway.version!==(await api("/api/capabilities")).version) throw new Error("Gateway dan backend berbeda versi.");
   const langs=data.languages?.length?data.languages:FALLBACK_LANGS.map(x=>x[0]);
