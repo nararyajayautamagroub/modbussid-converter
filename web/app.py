@@ -1,10 +1,11 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
+import os
+import secrets
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from starlette.middleware.sessions import SessionMiddleware
-import os
 
 from shared.auth_db import init_db
 
@@ -27,7 +28,7 @@ app = FastAPI(title=PRODUCT_NAME, version=APP_VERSION)
 init_db()
 app.add_middleware(
     SessionMiddleware,
-    secret_key=os.getenv("SESSION_SECRET", "dev-only-change-this-secret"),
+    secret_key=os.getenv("SESSION_SECRET") or secrets.token_hex(32),
     session_cookie="oauth_session",
     max_age=900,
     same_site="lax",
