@@ -29,6 +29,7 @@ def test_scraper_parser_extracts_metadata():
     assert parser.canonical == "https://example.com/canonical"
     assert parser.headings == ["Hello World"]
     assert parser.links[0]["url"] == "https://example.com/vehicle"
+    assert parser.links[0]["text"] == "Vehicle"
     assert parser.images == ["https://example.com/image.png"]
     assert parser.json_ld[0]["name"] == "Demo"
 
