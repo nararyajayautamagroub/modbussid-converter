@@ -2,105 +2,92 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#16a34a">
-<title>Game Mod Asset Lab</title>
+<meta name="description" content="Game Mod Asset Lab v4">
+<link rel="manifest" href="/manifest.webmanifest">
+<title>Game Mod Asset Lab v4</title>
 <style>
 :root{
-  --green:#16a34a;
-  --green-dark:#15803d;
-  --green-soft:#dcfce7;
-  --border:#d1d5db;
-  --text:#17202a;
-  --muted:#667085;
-  --surface:#ffffff;
-  --surface-soft:#f6f8f7;
+  --green:#16a34a;--green-dark:#15803d;--green-soft:#dcfce7;--danger:#dc2626;
+  --border:#d1d5db;--text:#17202a;--muted:#667085;--surface:#fff;--soft:#f6f8f7;
+  --shadow:0 8px 28px rgba(15,23,42,.07);
+  color:var(--text);background:var(--surface);
   font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  color:var(--text);
-  background:#fff
+}
+:root[data-theme="dark"]{
+  --border:#334155;--text:#e5e7eb;--muted:#a5adba;--surface:#0f172a;--soft:#111827;
+  --shadow:0 12px 30px rgba(0,0,0,.22);
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:#fff;color:var(--text)}
-button,input{font:inherit}
+html{scroll-behavior:smooth;background:var(--surface)}
+body{margin:0;min-height:100vh;background:var(--surface);color:var(--text)}
+button,input,select{font:inherit}
 button{cursor:pointer}
 a{color:var(--green-dark);text-decoration:none}
 a:hover{text-decoration:underline}
-.topbar{
-  position:sticky;top:0;z-index:100;
-  display:flex;align-items:center;justify-content:space-between;
-  gap:16px;padding:12px 20px;border-bottom:1px solid var(--border);
-  background:rgba(255,255,255,.96);backdrop-filter:blur(10px)
-}
-.brand{font-weight:800;letter-spacing:.2px}
-.menu-button{
-  width:44px;height:44px;border:0;border-radius:10px;
-  background:var(--green);color:#fff;font-size:26px;font-weight:800
-}
-.menu-button:hover{background:var(--green-dark)}
-.layout{max-width:1200px;margin:auto;padding:24px 20px 60px}
-.drawer{
-  position:fixed;top:69px;right:18px;z-index:90;width:min(290px,calc(100vw - 36px));
-  background:#fff;border:1px solid var(--border);border-radius:14px;
-  box-shadow:0 18px 40px rgba(15,23,42,.15);padding:10px;
-  opacity:0;transform:translateY(-8px);pointer-events:none;transition:.18s ease
-}
-.drawer.open{opacity:1;transform:translateY(0);pointer-events:auto}
-.drawer a{
-  display:block;padding:12px 14px;border-radius:10px;color:var(--text);font-weight:700
-}
-.drawer a:hover{background:var(--green-soft);text-decoration:none}
-.hero{padding:12px 0 6px}
-.hero h1{margin:0 0 8px;font-size:clamp(30px,5vw,46px)}
-.hero p{margin:0;color:var(--muted)}
-section{
-  border:1px solid var(--border);border-radius:16px;background:var(--surface);
-  padding:20px;margin:16px 0;box-shadow:0 5px 20px rgba(15,23,42,.05)
-}
-section h2{margin-top:0}
+.topbar{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px max(14px,env(safe-area-inset-left)) 12px max(14px,env(safe-area-inset-right));border-bottom:1px solid var(--border);background:color-mix(in srgb,var(--surface) 95%,transparent);backdrop-filter:blur(12px)}
+.brand{font-weight:900;letter-spacing:.2px}
+.brand small{display:block;font-weight:600;color:var(--muted);font-size:11px}
+.menu-button{width:44px;height:44px;border:0;border-radius:12px;background:var(--green);color:#fff;font-size:26px;font-weight:900;transition:transform .18s ease,background .18s ease,box-shadow .18s ease;box-shadow:0 5px 14px rgba(22,163,74,.2)}
+.menu-button:hover{background:var(--green-dark);transform:translateY(-1px)}
+.layout{width:min(1240px,100%);margin:auto;padding:22px max(14px,env(safe-area-inset-right)) 60px max(14px,env(safe-area-inset-left))}
+.drawer{position:fixed;top:68px;right:14px;z-index:90;width:min(330px,calc(100vw - 28px));background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:10px;opacity:0;transform:translateY(-8px) scale(.98);pointer-events:none;transition:.18s ease}
+.drawer.open{opacity:1;transform:none;pointer-events:auto}
+.drawer a,.drawer button{display:block;width:100%;padding:12px 14px;border:0;border-radius:10px;background:transparent;color:var(--text);text-align:left;font-weight:800}
+.drawer a:hover,.drawer button:hover{background:var(--green-soft);text-decoration:none}
+.hero{padding:10px 0 4px}
+.hero h1{margin:8px 0;font-size:clamp(30px,6vw,48px);line-height:1.05}
+.hero p{margin:0;color:var(--muted);max-width:780px}
+section{border:1px solid var(--border);border-radius:18px;background:var(--surface);padding:20px;margin:16px 0;box-shadow:var(--shadow)}
+section h2{margin:0 0 12px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-.card{padding:15px;border:1px solid var(--border);border-radius:12px;background:var(--surface-soft)}
-.card h3{margin-top:0}
-input{
-  padding:11px 12px;border:1px solid var(--border);border-radius:10px;
-  background:#fff;color:var(--text);min-width:0
-}
-input:focus{outline:3px solid rgba(22,163,74,.18);border-color:var(--green)}
-button.action{
-  padding:11px 14px;border:0;border-radius:10px;background:var(--green);
-  color:#fff;font-weight:800
-}
-button.action:hover{background:var(--green-dark)}
-button.secondary{
-  padding:11px 14px;border:1px solid var(--green);border-radius:10px;
-  background:#fff;color:var(--green-dark);font-weight:800
-}
-button.secondary:hover{background:var(--green-soft)}
+.card{padding:15px;border:1px solid var(--border);border-radius:14px;background:var(--soft)}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+input,select{padding:11px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);min-width:0}
+input:focus,select:focus{outline:3px solid rgba(22,163,74,.18);border-color:var(--green)}
+button.action{padding:11px 15px;border:0;border-radius:10px;background:var(--green);color:#fff;font-weight:900;transition:transform .18s ease,box-shadow .18s ease,background .18s ease;box-shadow:0 5px 14px rgba(22,163,74,.16)}
+button.action:hover{background:var(--green-dark);transform:translateY(-1px)}
+button.secondary{padding:11px 15px;border:1px solid var(--green);border-radius:10px;background:var(--surface);color:var(--green-dark);font-weight:900}
+button.danger{padding:11px 15px;border:0;border-radius:10px;background:var(--danger);color:#fff;font-weight:900}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:999px;background:var(--green-soft);color:var(--green-dark);font-size:12px;font-weight:900}
+.status{color:var(--muted)}
+.muted{color:var(--muted)}
+.error{color:var(--danger);font-weight:700}
+.success{color:var(--green-dark);font-weight:800}
+pre{white-space:pre-wrap;overflow:auto;background:var(--soft);border:1px solid var(--border);border-radius:10px;padding:12px;max-height:360px}
 .entry-list{max-height:320px;overflow:auto;margin:12px 0;padding:8px;border:1px solid var(--border);border-radius:10px}
 .entry-list label{display:block;padding:8px;border-radius:8px}
-.entry-list label:hover{background:var(--surface-soft)}
-pre{
-  white-space:pre-wrap;overflow:auto;background:#f8faf9;border:1px solid var(--border);
-  border-radius:10px;padding:12px
-}
-.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:var(--green-soft);color:var(--green-dark);font-weight:800;font-size:12px}
-.status{color:var(--muted)}
-.footer{text-align:center;color:var(--muted);padding:30px 0}
+.entry-list label:hover{background:var(--soft)}
+.auth-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.auth-card{padding:16px;border:1px solid var(--border);border-radius:14px;background:var(--soft)}
+.avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;border:1px solid var(--border)}
+.hidden{display:none!important}
+.footer{text-align:center;color:var(--muted);padding:36px 0}
+.lang-pill{font-weight:800;color:var(--green-dark)}
+.switch{display:inline-flex;align-items:center;gap:8px}
 @media (max-width:640px){
-  .layout{padding:18px 14px 40px}
-  section{padding:16px}
-  .topbar{padding:10px 14px}
+  .layout{padding-top:16px}
+  section{padding:16px;margin:12px 0}
+  .row>*{flex:1 1 100%}
+  .row .fixed{flex:0 0 auto}
+  .auth-grid{grid-template-columns:1fr}
+  .drawer{top:64px}
+}
+@media (min-width:900px){
+  .layout{padding-left:20px;padding-right:20px}
 }
 </style>
 </head>
 <body>
 <header class="topbar">
-  <div class="brand">Game Mod Asset Lab</div>
+  <div class="brand">Game Mod Asset Lab <small>v4.0.0</small></div>
   <button class="menu-button" id="menuButton" aria-label="Buka menu" aria-expanded="false" aria-controls="menu">=</button>
 </header>
 
 <nav class="drawer" id="menu" aria-label="Menu utama">
+  <a href="#account" data-i18n="account">Akun</a>
+  <a href="#settings" data-i18n="settings">Pengaturan</a>
   <a href="#inspect">Upload & Inspect</a>
   <a href="#templates">Template</a>
   <a href="#repository">Repository</a>
@@ -112,10 +99,85 @@ pre{
 
 <main class="layout">
   <div class="hero">
-    <span class="badge">Repository Connected</span>
+    <span class="badge">● <span id="connectionText">Repository Connected</span></span>
     <h1>Asset Inspector & Exporter</h1>
-    <p>Inspect → temukan asset → klasifikasi → pilih → export → download.</p>
+    <p>Inspect → klasifikasi → pilih → export → download. Sekarang juga dilengkapi akun, Google Login, Settings, 10 bahasa, PWA, dan scraper publik.</p>
   </div>
+
+  <section id="account">
+    <h2 data-i18n="account">Akun</h2>
+    <div id="loggedOut" class="auth-grid">
+      <div class="auth-card">
+        <h3 data-i18n="login">Login</h3>
+        <div class="row">
+          <input id="loginEmail" type="email" autocomplete="email" data-i18n-placeholder="email" placeholder="Email">
+          <input id="loginPassword" type="password" autocomplete="current-password" data-i18n-placeholder="password" placeholder="Password">
+          <button class="action" onclick="loginUser()" data-i18n="login">Login</button>
+          <button class="secondary" id="googleButton" onclick="googleLogin()" data-i18n="login_google">Login dengan Google</button>
+        </div>
+        <div id="loginResult" class="status"></div>
+      </div>
+      <div class="auth-card">
+        <h3 data-i18n="register">Register</h3>
+        <div class="row">
+          <input id="registerName" type="text" autocomplete="name" data-i18n-placeholder="name" placeholder="Nama">
+          <input id="registerEmail" type="email" autocomplete="email" data-i18n-placeholder="email" placeholder="Email">
+          <input id="registerPassword" type="password" autocomplete="new-password" data-i18n-placeholder="password" placeholder="Password">
+          <select id="registerLanguage" aria-label="Bahasa"></select>
+          <button class="action" onclick="registerUser()" data-i18n="create_account">Buat akun</button>
+        </div>
+        <div class="status">Password minimal 8 karakter, harus memiliki huruf besar, kecil, dan angka.</div>
+        <div id="registerResult" class="status"></div>
+      </div>
+    </div>
+
+    <div id="loggedIn" class="auth-card hidden">
+      <div class="row">
+        <img id="avatar" class="avatar" alt="">
+        <div style="flex:1"><strong id="accountName"></strong><div class="muted" id="accountEmail"></div></div>
+        <button class="secondary" onclick="logoutUser()" data-i18n="logout">Logout</button>
+        <button class="danger" onclick="logoutAll()">Logout Semua</button>
+      </div>
+      <div id="accountStatus" class="status" style="margin-top:10px"></div>
+    </div>
+  </section>
+
+  <section id="settings">
+    <h2 data-i18n="settings">Pengaturan</h2>
+    <div class="grid">
+      <div class="card">
+        <strong data-i18n="language">Bahasa</strong>
+        <select id="settingsLanguage" aria-label="Bahasa"></select>
+        <div class="status" data-i18n="language_count">10 bahasa tersedia</div>
+      </div>
+      <div class="card">
+        <strong data-i18n="theme">Tema</strong>
+        <select id="settingsTheme" aria-label="Tema">
+          <option value="light" data-i18n="light">Terang</option>
+          <option value="dark" data-i18n="dark">Gelap</option>
+          <option value="system" data-i18n="system">Sistem</option>
+        </select>
+      </div>
+      <div class="card">
+        <strong data-i18n="notifications">Notifikasi</strong>
+        <label class="switch"><input id="settingsNotifications" type="checkbox"> Aktif</label>
+      </div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <button class="action" onclick="saveSettings()" data-i18n="save">Simpan</button>
+      <span id="settingsResult" class="status">Perubahan lokal bisa dipakai tanpa login; sinkronisasi akun memerlukan login.</span>
+    </div>
+  </section>
+
+  <section id="passwordSection" class="hidden">
+    <h2 data-i18n="change_password">Ganti password</h2>
+    <div class="row">
+      <input id="currentPassword" type="password" autocomplete="current-password" data-i18n-placeholder="current_password" placeholder="Password lama">
+      <input id="newPassword" type="password" autocomplete="new-password" data-i18n-placeholder="new_password" placeholder="Password baru">
+      <button class="action" onclick="changePassword()" data-i18n="save">Simpan</button>
+    </div>
+    <div id="passwordResult" class="status"></div>
+  </section>
 
   <section id="inspect">
     <h2>Upload & Inspect</h2>
@@ -141,7 +203,7 @@ pre{
       <div class="card"><b>Kaca/XOR</b><br><small>Template kaca / glass</small></div>
     </div>
     <div class="row" style="margin-top:12px">
-      <input id="templatePath" placeholder="uploads/nama-file.png" style="flex:1;min-width:240px">
+      <input id="templatePath" placeholder="uploads/nama-file.png" style="flex:1">
       <button class="action" onclick="classifyTemplate()">Classify</button>
     </div>
     <pre id="templateResult"></pre>
@@ -156,12 +218,12 @@ pre{
     <pre id="repositoryResult">Belum dimuat.</pre>
   </section>
 
-<section id="scraper">
+  <section id="scraper">
     <h2>Web Scraper</h2>
-    <p class="status">Ambil metadata publik, Open Graph, JSON-LD, heading, link, dan image. Crawl dibatasi ke domain yang sama.</p>
+    <p class="status">Metadata publik, Open Graph, JSON-LD, heading, link, image, robots.txt, anti-SSRF, dan crawl same-host.</p>
     <div class="row">
-      <input id="scraperUrl" type="url" style="flex:1;min-width:240px" placeholder="https://example.com/">
-      <input id="scraperPages" type="number" min="1" max="25" value="5" style="width:100px" aria-label="Jumlah halaman crawl">
+      <input id="scraperUrl" type="url" style="flex:1" placeholder="https://example.com/">
+      <input id="scraperPages" type="number" min="1" max="25" value="5" style="width:110px">
       <button class="action" onclick="scrapePage()">Scrape</button>
       <button class="secondary" onclick="crawlSite()">Crawl</button>
     </div>
@@ -171,7 +233,7 @@ pre{
   <section id="roblox">
     <h2>Roblox URL Asset</h2>
     <div class="row">
-      <input id="url" style="flex:1;min-width:240px" placeholder="https://www.roblox.com/...">
+      <input id="url" style="flex:1" placeholder="https://www.roblox.com/...">
       <button class="action" onclick="getRoblox()">Download Asset</button>
     </div>
     <pre id="result"></pre>
@@ -181,8 +243,8 @@ pre{
     <h2>Sprite Sheet</h2>
     <p class="status">Upload image sprite sheet, lalu pecah menjadi frame ZIP berdasarkan grid.</p>
     <div class="row">
-      <input id="spriteColumns" type="number" min="1" max="64" value="4" style="width:100px" aria-label="Jumlah kolom">
-      <input id="spriteRows" type="number" min="1" max="64" value="4" style="width:100px" aria-label="Jumlah baris">
+      <input id="spriteColumns" type="number" min="1" max="64" value="4" style="width:100px">
+      <input id="spriteRows" type="number" min="1" max="64" value="4" style="width:100px">
       <button class="action" onclick="extractSpriteSheet()">Extract Frames</button>
     </div>
     <pre id="spriteResult"></pre>
@@ -193,170 +255,220 @@ pre{
     <div id="lightsGrid" class="grid"></div>
   </section>
 
-  <div class="footer">Game Mod Asset Lab • inspect/export untuk asset yang Anda berhak proses.</div>
+  <div class="footer">Game Mod Asset Lab v4 • <span id="footerVersion">4.0.0</span> • responsive + PWA</div>
 </main>
 
 <script>
-let uploadedPath='';
+const FALLBACK_LANGS=[
+  ["id","Bahasa Indonesia"],["en","English"],["ms","Bahasa Melayu"],["ar","العربية"],["ja","日本語"],
+  ["ko","한국어"],["zh","简体中文"],["es","Español"],["pt","Português"],["fr","Français"]
+];
+let uploadedPath="", currentUser=null, translations={};
+
+const I18N_FALLBACK={
+  id:{menu:"Menu utama",account:"Akun",login:"Login",register:"Register",logout:"Logout",settings:"Pengaturan",language:"Bahasa",theme:"Tema",notifications:"Notifikasi",save:"Simpan",email:"Email",password:"Password",name:"Nama",login_google:"Login dengan Google",change_password:"Ganti password",current_password:"Password lama",new_password:"Password baru",create_account:"Buat akun",logged_in_as:"Login sebagai",light:"Terang",dark:"Gelap",system:"Sistem",language_count:"10 bahasa tersedia"},
+  en:{menu:"Main menu",account:"Account",login:"Login",register:"Register",logout:"Logout",settings:"Settings",language:"Language",theme:"Theme",notifications:"Notifications",save:"Save",email:"Email",password:"Password",name:"Name",login_google:"Login with Google",change_password:"Change password",current_password:"Current password",new_password:"New password",create_account:"Create account",logged_in_as:"Logged in as",light:"Light",dark:"Dark",system:"System",language_count:"10 languages available"},
+  ms:{menu:"Menu utama",account:"Akaun",login:"Log masuk",register:"Daftar",logout:"Log keluar",settings:"Tetapan",language:"Bahasa",theme:"Tema",notifications:"Pemberitahuan",save:"Simpan",email:"E-mel",password:"Kata laluan",name:"Nama",login_google:"Log masuk dengan Google",change_password:"Tukar kata laluan",current_password:"Kata laluan semasa",new_password:"Kata laluan baharu",create_account:"Cipta akaun",logged_in_as:"Log masuk sebagai",light:"Cerah",dark:"Gelap",system:"Sistem",language_count:"10 bahasa tersedia"},
+  ar:{menu:"القائمة الرئيسية",account:"الحساب",login:"تسجيل الدخول",register:"إنشاء حساب",logout:"تسجيل الخروج",settings:"الإعدادات",language:"اللغة",theme:"السمة",notifications:"الإشعارات",save:"حفظ",email:"البريد الإلكتروني",password:"كلمة المرور",name:"الاسم",login_google:"تسجيل الدخول باستخدام Google",change_password:"تغيير كلمة المرور",current_password:"كلمة المرور الحالية",new_password:"كلمة المرور الجديدة",create_account:"إنشاء حساب",logged_in_as:"تم تسجيل الدخول باسم",light:"فاتح",dark:"داكن",system:"النظام",language_count:"10 لغات متاحة"},
+  ja:{menu:"メインメニュー",account:"アカウント",login:"ログイン",register:"登録",logout:"ログアウト",settings:"設定",language:"言語",theme:"テーマ",notifications:"通知",save:"保存",email:"メール",password:"パスワード",name:"名前",login_google:"Googleでログイン",change_password:"パスワード変更",current_password:"現在のパスワード",new_password:"新しいパスワード",create_account:"アカウント作成",logged_in_as:"ログイン中",light:"ライト",dark:"ダーク",system:"システム",language_count:"10言語対応"},
+  ko:{menu:"메인 메뉴",account:"계정",login:"로그인",register:"회원가입",logout:"로그아웃",settings:"설정",language:"언어",theme:"테마",notifications:"알림",save:"저장",email:"이메일",password:"비밀번호",name:"이름",login_google:"Google로 로그인",change_password:"비밀번호 변경",current_password:"현재 비밀번호",new_password:"새 비밀번호",create_account:"계정 만들기",logged_in_as:"로그인 계정",light:"라이트",dark:"다크",system:"시스템",language_count:"10개 언어 지원"},
+  zh:{menu:"主菜单",account:"账户",login:"登录",register:"注册",logout:"退出登录",settings:"设置",language:"语言",theme:"主题",notifications:"通知",save:"保存",email:"邮箱",password:"密码",name:"姓名",login_google:"使用 Google 登录",change_password:"修改密码",current_password:"当前密码",new_password:"新密码",create_account:"创建账户",logged_in_as:"当前登录",light:"浅色",dark:"深色",system:"系统",language_count:"支持10种语言"},
+  es:{menu:"Menú principal",account:"Cuenta",login:"Iniciar sesión",register:"Registrarse",logout:"Cerrar sesión",settings:"Configuración",language:"Idioma",theme:"Tema",notifications:"Notificaciones",save:"Guardar",email:"Correo",password:"Contraseña",name:"Nombre",login_google:"Iniciar sesión con Google",change_password:"Cambiar contraseña",current_password:"Contraseña actual",new_password:"Nueva contraseña",create_account:"Crear cuenta",logged_in_as:"Sesión iniciada como",light:"Claro",dark:"Oscuro",system:"Sistema",language_count:"10 idiomas disponibles"},
+  pt:{menu:"Menu principal",account:"Conta",login:"Entrar",register:"Cadastrar",logout:"Sair",settings:"Configurações",language:"Idioma",theme:"Tema",notifications:"Notificações",save:"Salvar",email:"E-mail",password:"Senha",name:"Nome",login_google:"Entrar com Google",change_password:"Alterar senha",current_password:"Senha atual",new_password:"Nova senha",create_account:"Criar conta",logged_in_as:"Conectado como",light:"Claro",dark:"Escuro",system:"Sistema",language_count:"10 idiomas disponíveis"},
+  fr:{menu:"Menu principal",account:"Compte",login:"Connexion",register:"Inscription",logout:"Déconnexion",settings:"Paramètres",language:"Langue",theme:"Thème",notifications:"Notifications",save:"Enregistrer",email:"E-mail",password:"Mot de passe",name:"Nom",login_google:"Se connecter avec Google",change_password:"Changer le mot de passe",current_password:"Mot de passe actuel",new_password:"Nouveau mot de passe",create_account:"Créer un compte",logged_in_as:"Connecté en tant que",light:"Clair",dark:"Sombre",system:"Système",language_count:"10 langues disponibles"}
+};
 
 function byId(id){return document.getElementById(id)}
-
-async function api(url,options){
-  const response=await fetch(url,options);
-  const data=await response.json().catch(()=>({detail:response.statusText||'Request gagal'}));
-  if(!response.ok) throw new Error(data.detail||'Request gagal');
+function setText(id,value){byId(id).textContent=value}
+async function api(url,options={}){
+  const response=await fetch(url,{credentials:"same-origin",...options});
+  const data=await response.json().catch(()=>({detail:response.statusText||"Request gagal"}));
+  if(!response.ok) throw new Error(data.detail||"Request gagal");
   return data;
 }
-
-function setText(id,value){byId(id).textContent=value}
-
+function languageOptions(select,selected){
+  select.innerHTML="";
+  FALLBACK_LANGS.forEach(([code,label])=>{
+    const option=document.createElement("option");
+    option.value=code;option.textContent=label;option.selected=code===selected;
+    select.append(option);
+  });
+}
+function applyTranslations(language){
+  translations=I18N_FALLBACK[language]||I18N_FALLBACK.id;
+  document.documentElement.lang=language;
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const key=el.getAttribute("data-i18n");
+    if(translations[key]) el.textContent=translations[key];
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{
+    const key=el.getAttribute("data-i18n-placeholder");
+    if(translations[key]) el.placeholder=translations[key];
+  });
+  document.documentElement.dir=language==="ar"?"rtl":"ltr";
+}
+function applyTheme(theme){
+  let actual=theme;
+  if(theme==="system") actual=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";
+  document.documentElement.dataset.theme=actual;
+  localStorage.setItem("asset_lab_theme",theme);
+}
+function saveLocalSettings(){
+  localStorage.setItem("asset_lab_language",byId("settingsLanguage").value);
+  localStorage.setItem("asset_lab_theme",byId("settingsTheme").value);
+  localStorage.setItem("asset_lab_notifications",String(byId("settingsNotifications").checked));
+}
+async function loadAuthStatus(){
+  const data=await api("/api/auth/status");
+  const langs=data.languages?.length?data.languages:FALLBACK_LANGS.map(x=>x[0]);
+  const options=FALLBACK_LANGS.filter(([code])=>langs.includes(code));
+  FALLBACK_LANGS.splice(0,FALLBACK_LANGS.length,...options);
+  const localLang=localStorage.getItem("asset_lab_language")||"id";
+  languageOptions(byId("registerLanguage"),localLang);
+  languageOptions(byId("settingsLanguage"),localLang);
+  byId("settingsTheme").value=localStorage.getItem("asset_lab_theme")||"light";
+  byId("settingsNotifications").checked=localStorage.getItem("asset_lab_notifications")!=="false";
+  applyTranslations(localLang);
+  applyTheme(byId("settingsTheme").value);
+  if(!data.google_enabled){
+    byId("googleButton").disabled=true;
+    byId("googleButton").title="Google Login belum dikonfigurasi oleh administrator.";
+  }
+}
+async function loadMe(){
+  try{
+    currentUser=await api("/api/auth/me");
+    byId("loggedOut").classList.add("hidden");
+    byId("loggedIn").classList.remove("hidden");
+    byId("passwordSection").classList.remove("hidden");
+    byId("accountName").textContent=currentUser.name;
+    byId("accountEmail").textContent=currentUser.email;
+    byId("accountStatus").textContent=(translations.logged_in_as||"Login sebagai")+" "+currentUser.name;
+    byId("avatar").src=currentUser.avatar_url||"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Crect width='44' height='44' rx='22' fill='%2316a34a'/%3E%3Ctext x='22' y='28' text-anchor='middle' font-size='18' fill='white'%3E%3F%3C/text%3E%3C/svg%3E";
+    byId("settingsLanguage").value=currentUser.language||"id";
+    byId("settingsTheme").value=currentUser.theme||"light";
+    byId("settingsNotifications").checked=!!currentUser.notifications;
+    applyTranslations(currentUser.language||"id");
+    applyTheme(currentUser.theme||"light");
+  }catch{
+    currentUser=null;
+    byId("loggedOut").classList.remove("hidden");
+    byId("loggedIn").classList.add("hidden");
+    byId("passwordSection").classList.add("hidden");
+  }
+}
+async function registerUser(){
+  try{
+    const data=await api("/api/auth/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+      name:byId("registerName").value.trim(),email:byId("registerEmail").value.trim(),password:byId("registerPassword").value,language:byId("registerLanguage").value
+    })});
+    currentUser=data.user;setText("registerResult","Akun berhasil dibuat.");await loadMe();
+  }catch(error){setText("registerResult",error.message)}
+}
+async function loginUser(){
+  try{
+    const data=await api("/api/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+      email:byId("loginEmail").value.trim(),password:byId("loginPassword").value
+    })});
+    currentUser=data.user;setText("loginResult","Login berhasil.");await loadMe();
+  }catch(error){setText("loginResult",error.message)}
+}
+function googleLogin(){window.location.href="/api/auth/google/start"}
+async function logoutUser(){
+  try{await api("/api/auth/logout",{method:"POST"});location.reload()}catch(error){setText("accountStatus",error.message)}
+}
+async function logoutAll(){
+  try{await api("/api/auth/logout-all",{method:"POST"});location.reload()}catch(error){setText("accountStatus",error.message)}
+}
+async function saveSettings(){
+  const language=byId("settingsLanguage").value,theme=byId("settingsTheme").value,notifications=byId("settingsNotifications").checked;
+  applyTranslations(language);applyTheme(theme);saveLocalSettings();
+  if(!currentUser){setText("settingsResult","Pengaturan lokal tersimpan.");return}
+  try{
+    const data=await api("/api/auth/settings",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({language,theme,notifications})});
+    currentUser=data.user;setText("settingsResult","Pengaturan akun tersimpan.");applyTranslations(language);
+  }catch(error){setText("settingsResult",error.message)}
+}
+async function changePassword(){
+  if(!currentUser){setText("passwordResult","Login diperlukan.");return}
+  try{
+    await api("/api/auth/password",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({current_password:byId("currentPassword").value,new_password:byId("newPassword").value})});
+    setText("passwordResult","Password berhasil diubah.");byId("currentPassword").value="";byId("newPassword").value="";
+  }catch(error){setText("passwordResult",error.message)}
+}
 async function uploadAsset(){
-  const file=byId('file').files[0];
-  if(!file){setText('uploadResult','Pilih file dulu.');return}
-  const form=new FormData();
-  form.append('file',file);
-  setText('uploadResult','Mengunggah...');
+  const file=byId("file").files[0];
+  if(!file){setText("uploadResult","Pilih file dulu.");return}
+  const form=new FormData();form.append("file",file);setText("uploadResult","Mengunggah...");
   try{
-    const data=await api('/api/assets/upload',{method:'POST',body:form});
-    uploadedPath=data.path;
-    byId('templatePath').value=data.path;
-    setText('uploadResult',JSON.stringify(data,null,2));
-    await inspectUploaded();
-  }catch(error){setText('uploadResult',error.message)}
+    const data=await api("/api/assets/upload",{method:"POST",body:form});
+    uploadedPath=data.path;byId("templatePath").value=data.path;setText("uploadResult",JSON.stringify(data,null,2));await inspectUploaded();
+  }catch(error){setText("uploadResult",error.message)}
 }
-
 async function inspectUploaded(){
-  const path=uploadedPath||byId('templatePath').value.trim();
-  if(!path){setText('uploadResult','Belum ada path file.');return}
-  try{
-    const data=await api('/api/assets/inspect?path='+encodeURIComponent(path));
-    setText('uploadResult',JSON.stringify(data,null,2));
-    renderEntries(data);
-  }catch(error){setText('uploadResult',error.message)}
+  const path=uploadedPath||byId("templatePath").value.trim();
+  if(!path){setText("uploadResult","Belum ada path file.");return}
+  try{const data=await api("/api/assets/inspect?path="+encodeURIComponent(path));setText("uploadResult",JSON.stringify(data,null,2));renderEntries(data)}
+  catch(error){setText("uploadResult",error.message)}
 }
-
 function renderEntries(data){
-  const box=byId('entries');
-  box.innerHTML='';
-  const entries=(data&&data.entries)||[];
-  if(!entries.length){
-    box.textContent='Tidak ada entry archive. Export Asset akan mengirim file sumber.';
-    return;
-  }
-  const title=document.createElement('strong');
-  title.textContent='Entries archive';
-  box.appendChild(title);
-  for(const entry of entries){
-    if(entry.is_dir) continue;
-    const label=document.createElement('label');
-    const checkbox=document.createElement('input');
-    checkbox.type='checkbox';
-    checkbox.value=entry.name;
-    checkbox.className='entry-check';
-    label.append(checkbox,' ',entry.name,' (',entry.size,' bytes)');
-    box.appendChild(label);
-  }
+  const box=byId("entries");box.innerHTML="";const entries=(data&&data.entries)||[];
+  if(!entries.length){box.textContent="Tidak ada entry archive. Export Asset akan mengirim file sumber.";return}
+  const title=document.createElement("strong");title.textContent="Entries archive";box.appendChild(title);
+  for(const entry of entries){if(entry.is_dir)continue;const label=document.createElement("label");const checkbox=document.createElement("input");checkbox.type="checkbox";checkbox.value=entry.name;checkbox.className="entry-check";label.append(checkbox," ",entry.name," (",entry.size," bytes)");box.appendChild(label)}
 }
-
 function exportSelected(){
-  const path=uploadedPath||byId('templatePath').value.trim();
-  const result=byId('exportResult');
-  if(!path){result.textContent='Belum ada file.';return}
-  const selected=[...document.querySelectorAll('.entry-check:checked')].map(x=>x.value);
-  const params=new URLSearchParams();
-  params.set('path',path);
-  selected.forEach(name=>params.append('selected',name));
+  const path=uploadedPath||byId("templatePath").value.trim();const result=byId("exportResult");
+  if(!path){result.textContent="Belum ada file.";return}
+  const selected=[...document.querySelectorAll(".entry-check:checked")].map(x=>x.value);const params=new URLSearchParams();params.set("path",path);selected.forEach(name=>params.append("selected",name));
   result.innerHTML='<a class="badge" href="/api/assets/export?'+params.toString()+'">Download export ZIP</a>';
 }
-
 async function classifyTemplate(){
-  const path=byId('templatePath').value.trim();
-  if(!path){setText('templateResult','Masukkan path file.');return}
-  try{
-    const data=await api('/api/templates/classify?path='+encodeURIComponent(path));
-    setText('templateResult',JSON.stringify(data,null,2));
-  }catch(error){setText('templateResult',error.message)}
+  const path=byId("templatePath").value.trim();if(!path){setText("templateResult","Masukkan path file.");return}
+  try{setText("templateResult",JSON.stringify(await api("/api/templates/classify?path="+encodeURIComponent(path)),null,2))}
+  catch(error){setText("templateResult",error.message)}
 }
-
-async function scrapePage(){
-  const url=byId('scraperUrl').value.trim();
-  if(!url){setText('scraperResult','Masukkan URL publik dulu.');return}
-  setText('scraperResult','Mengambil halaman...');
-  try{
-    const data=await api('/api/scraper/fetch?url='+encodeURIComponent(url));
-    setText('scraperResult',JSON.stringify(data,null,2));
-  }catch(error){setText('scraperResult',error.message)}
-}
-
-async function crawlSite(){
-  const url=byId('scraperUrl').value.trim();
-  const pages=Number(byId('scraperPages').value);
-  if(!url){setText('scraperResult','Masukkan URL publik dulu.');return}
-  if(!Number.isInteger(pages)||pages<1||pages>25){
-    setText('scraperResult','Jumlah halaman harus 1-25.');
-    return
-  }
-  setText('scraperResult','Menjalankan crawl domain yang sama...');
-  try{
-    const data=await api('/api/scraper/crawl?url='+encodeURIComponent(url)+'&max_pages='+pages);
-    setText('scraperResult',JSON.stringify(data,null,2));
-  }catch(error){setText('scraperResult',error.message)}
-}
-
 async function loadRepository(){
-  try{
-    const data=await api('/api/repository');
-    setText('repositoryResult',JSON.stringify(data,null,2));
-  }catch(error){setText('repositoryResult',error.message)}
+  try{setText("repositoryResult",JSON.stringify(await api("/api/repository"),null,2))}
+  catch(error){setText("repositoryResult",error.message)}
 }
-
 async function loadTree(){
-  try{
-    const data=await api('/api/repository/tree');
-    setText('repositoryResult',JSON.stringify(data,null,2));
-  }catch(error){setText('repositoryResult',error.message)}
+  try{setText("repositoryResult",JSON.stringify(await api("/api/repository/tree"),null,2))}
+  catch(error){setText("repositoryResult",error.message)}
 }
-
+async function scrapePage(){
+  const url=byId("scraperUrl").value.trim();if(!url){setText("scraperResult","Masukkan URL publik dulu.");return}
+  setText("scraperResult","Mengambil halaman...");
+  try{setText("scraperResult",JSON.stringify(await api("/api/scraper/fetch?url="+encodeURIComponent(url)),null,2))}
+  catch(error){setText("scraperResult",error.message)}
+}
+async function crawlSite(){
+  const url=byId("scraperUrl").value.trim(),pages=Number(byId("scraperPages").value);if(!url){setText("scraperResult","Masukkan URL publik dulu.");return}
+  if(!Number.isInteger(pages)||pages<1||pages>25){setText("scraperResult","Jumlah halaman harus 1-25.");return}
+  setText("scraperResult","Menjalankan crawl...");
+  try{setText("scraperResult",JSON.stringify(await api("/api/scraper/crawl?url="+encodeURIComponent(url)+"&max_pages="+pages),null,2))}
+  catch(error){setText("scraperResult",error.message)}
+}
 async function getRoblox(){
-  const u=byId('url').value.trim();
-  if(!u){setText('result','Masukkan URL Roblox dulu.');return}
-  setText('result','Memvalidasi URL...');
-  try{
-    const data=await api('/api/assets/roblox/validate?url='+encodeURIComponent(u));
-    setText('result','Asset ID '+data.asset_id+' valid. Memulai download...');
-    window.location.href='/api/assets/roblox/url?url='+encodeURIComponent(u);
-  }catch(error){setText('result',error.message)}
+  const u=byId("url").value.trim();if(!u){setText("result","Masukkan URL Roblox dulu.");return}
+  try{const data=await api("/api/assets/roblox/validate?url="+encodeURIComponent(u));setText("result","Asset ID "+data.asset_id+" valid. Memulai download...");window.location.href="/api/assets/roblox/url?url="+encodeURIComponent(u)}
+  catch(error){setText("result",error.message)}
 }
-
 async function extractSpriteSheet(){
-  const path=uploadedPath||byId('templatePath').value.trim();
-  const columns=Number(byId('spriteColumns').value);
-  const rows=Number(byId('spriteRows').value);
-  const result=byId('spriteResult');
-  if(!path){result.textContent='Upload atau pilih file image dulu.';return}
-  if(!Number.isInteger(columns)||!Number.isInteger(rows)||columns<1||columns>64||rows<1||rows>64){
-    result.textContent='Rows dan columns harus bilangan bulat 1-64.';
-    return
-  }
+  const path=uploadedPath||byId("templatePath").value.trim(),columns=Number(byId("spriteColumns").value),rows=Number(byId("spriteRows").value),result=byId("spriteResult");
+  if(!path){result.textContent="Upload atau pilih file image dulu.";return}
+  if(!Number.isInteger(columns)||!Number.isInteger(rows)||columns<1||columns>64||rows<1||rows>64){result.textContent="Rows dan columns harus bilangan bulat 1-64.";return}
   result.innerHTML='<a class="badge" href="/api/sprite-sheet/extract?path='+encodeURIComponent(path)+'&columns='+columns+'&rows='+rows+'">Download frame ZIP</a>';
 }
-
-for(const t of ['strobo','rotator','ledbar']){
-  const card=document.createElement('div');
-  card.className='card';
-  card.innerHTML='<h3>'+t.toUpperCase()+'</h3><div class="row"><a href="/api/lights/'+t+'/download?platform=bussid">BUSSID ZIP</a><a href="/api/lights/'+t+'/download?platform=roblox">Roblox ZIP</a><a href="/api/lights/'+t+'">JSON Preview</a></div>';
-  byId('lightsGrid').append(card);
+for(const t of ["strobo","rotator","ledbar"]){
+  const card=document.createElement("div");card.className="card";card.innerHTML="<h3>"+t.toUpperCase()+'</h3><div class="row"><a href="/api/lights/'+t+'/download?platform=bussid">BUSSID ZIP</a><a href="/api/lights/'+t+'/download?platform=roblox">Roblox ZIP</a><a href="/api/lights/'+t+'">JSON Preview</a></div>';byId("lightsGrid").append(card)
 }
-
-const menuButton=byId('menuButton');
-const menu=byId('menu');
-menuButton.addEventListener('click',()=>{
-  const open=menu.classList.toggle('open');
-  menuButton.setAttribute('aria-expanded',String(open));
-});
-menu.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>menu.classList.remove('open')));
-
-loadRepository();
+const menuButton=byId("menuButton"),menu=byId("menu");
+menuButton.addEventListener("click",()=>{const open=menu.classList.toggle("open");menuButton.setAttribute("aria-expanded",String(open))});
+menu.querySelectorAll("a").forEach(link=>link.addEventListener("click",()=>menu.classList.remove("open")));
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",()=>{if((localStorage.getItem("asset_lab_theme")||"light")==="system")applyTheme("system")});
+if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});
+(async()=>{try{await loadAuthStatus();await loadMe()}catch(e){console.error(e)}loadRepository()})();
 </script>
 </body>
 </html>
