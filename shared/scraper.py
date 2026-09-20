@@ -42,6 +42,7 @@ class PageParser(HTMLParser):
         self._heading_parts: list[str] = []
         self._script_type: str | None = None
         self._script_parts: list[str] = []
+        self._active_link: dict | None = None
 
     def _clean(self, value: str) -> str:
         return " ".join(value.split()).strip()
@@ -69,12 +70,10 @@ class PageParser(HTMLParser):
             if href and len(self.links) < self.max_items:
                 absolute = urljoin(self.base_url, href)
                 absolute, _ = urldefrag(absolute)
-                self.links.append(
-                    {
-                        "url": absolute,
-                        "text": self._clean(attributes.get("title", "")),
-                    }
-                )
+                self._active_link = {
+                    "url": absolute,
+                    "text_parts": [self._clean(attributes.get("title", ""))],
+                }
         elif tag == "img":
             src = attributes.get("src") or attributes.get("data-src")
             if src and len(self.images) < self.max_items:
@@ -91,6 +90,14 @@ class PageParser(HTMLParser):
         tag = tag.lower()
         if tag == "title":
             self._in_title = False
+        elif tag == "a" and self._active_link is not None:
+            self.links.append(
+                {
+                    "url": self._active_link["url"],
+                    "text": self._clean(" ".join(self._active_link["text_parts"])),
+                }
+            )
+            self._active_link = None
         elif tag in {"h1", "h2", "h3", "h4", "h5", "h6"} and self._heading_level == tag:
             value = self._clean(" ".join(self._heading_parts))
             if value and len(self.headings) < self.max_items:
@@ -117,6 +124,8 @@ class PageParser(HTMLParser):
             self.title_parts.append(cleaned)
         if self._heading_level:
             self._heading_parts.append(cleaned)
+        if self._active_link is not None:
+            self._active_link["text_parts"].append(cleaned)
         if self._script_type == "application/ld+json":
             self._script_parts.append(data)
         else:
