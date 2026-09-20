@@ -104,6 +104,7 @@ pre{
   <a href="#inspect">Upload & Inspect</a>
   <a href="#templates">Template</a>
   <a href="#repository">Repository</a>
+  <a href="#scraper">Scraper</a>
   <a href="#roblox">Roblox URL</a>
   <a href="#sprites">Sprite Sheet</a>
   <a href="#lights">Animasi Lampu</a>
@@ -153,6 +154,18 @@ pre{
       <button class="secondary" onclick="loadTree()">Refresh Tree</button>
     </div>
     <pre id="repositoryResult">Belum dimuat.</pre>
+  </section>
+
+<section id="scraper">
+    <h2>Web Scraper</h2>
+    <p class="status">Ambil metadata publik, Open Graph, JSON-LD, heading, link, dan image. Crawl dibatasi ke domain yang sama.</p>
+    <div class="row">
+      <input id="scraperUrl" type="url" style="flex:1;min-width:240px" placeholder="https://example.com/">
+      <input id="scraperPages" type="number" min="1" max="25" value="5" style="width:100px" aria-label="Jumlah halaman crawl">
+      <button class="action" onclick="scrapePage()">Scrape</button>
+      <button class="secondary" onclick="crawlSite()">Crawl</button>
+    </div>
+    <pre id="scraperResult">Belum ada hasil.</pre>
   </section>
 
   <section id="roblox">
@@ -263,6 +276,31 @@ async function classifyTemplate(){
     const data=await api('/api/templates/classify?path='+encodeURIComponent(path));
     setText('templateResult',JSON.stringify(data,null,2));
   }catch(error){setText('templateResult',error.message)}
+}
+
+async function scrapePage(){
+  const url=byId('scraperUrl').value.trim();
+  if(!url){setText('scraperResult','Masukkan URL publik dulu.');return}
+  setText('scraperResult','Mengambil halaman...');
+  try{
+    const data=await api('/api/scraper/fetch?url='+encodeURIComponent(url));
+    setText('scraperResult',JSON.stringify(data,null,2));
+  }catch(error){setText('scraperResult',error.message)}
+}
+
+async function crawlSite(){
+  const url=byId('scraperUrl').value.trim();
+  const pages=Number(byId('scraperPages').value);
+  if(!url){setText('scraperResult','Masukkan URL publik dulu.');return}
+  if(!Number.isInteger(pages)||pages<1||pages>25){
+    setText('scraperResult','Jumlah halaman harus 1-25.');
+    return
+  }
+  setText('scraperResult','Menjalankan crawl domain yang sama...');
+  try{
+    const data=await api('/api/scraper/crawl?url='+encodeURIComponent(url)+'&max_pages='+pages);
+    setText('scraperResult',JSON.stringify(data,null,2));
+  }catch(error){setText('scraperResult',error.message)}
 }
 
 async function loadRepository(){
