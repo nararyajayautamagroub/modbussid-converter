@@ -266,6 +266,8 @@ def scrape_page(
     try:
         with opener.open(request, timeout=timeout) as response:
             final_url = _validate_url(response.geturl())
+            if not _robots_allowed(final_url, user_agent, timeout):
+                raise PermissionError("robots.txt melarang URL hasil redirect.")
             content_type = response.headers.get_content_type()
             payload = _read_response(response, max_bytes)
             charset = response.headers.get_content_charset() or "utf-8"
@@ -355,6 +357,9 @@ def crawl_site(
                 max_links=max_links_per_page,
                 timeout=timeout,
             )
+            final_host = (urlparse(page["final_url"]).hostname or "").lower()
+            if final_host != start_host:
+                raise ValueError("Crawl menolak redirect ke host lain.")
             pages.append(page)
         except (ValueError, PermissionError) as exc:
             errors.append({"url": current, "error": str(exc)})
