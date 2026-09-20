@@ -53,7 +53,7 @@ def download_asset(url: str, target: Path) -> dict:
     asset_id = asset_id_from_url(url)
     request = Request(
         f"https://assetdelivery.roblox.com/v1/asset/?id={asset_id}",
-        headers={"User-Agent": "Game-Mod-Asset-Lab/2.0"},
+        headers={"User-Agent": "Game-Mod-Asset-Lab/4.2"},
     )
     target.parent.mkdir(parents=True, exist_ok=True)
 
