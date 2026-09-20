@@ -71,3 +71,10 @@ def test_security_headers_and_pwa():
     worker = request("/sw.js")
     assert worker.status_code == 200
     assert worker.headers["content-type"].startswith("application/javascript")
+
+
+def test_crawl_route_rejects_invalid_limits():
+    response = request(
+        "/api/scraper/crawl?url=https%3A%2F%2Fexample.com%2F&max_bytes=0"
+    )
+    assert response.status_code == 400
