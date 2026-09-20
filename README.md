@@ -44,6 +44,21 @@ Classifier memakai nama file berbasis token agar radio.png tidak salah dibaca se
 ## Endpoint utama
 
 - GET /api/health
+- GET /api/auth/status
+- GET /api/auth/me
+- POST /api/auth/register
+- POST /api/auth/login
+- POST /api/auth/logout
+- POST /api/auth/logout-all
+- PUT /api/auth/settings
+- PUT /api/auth/password
+- GET /api/auth/google/start
+- GET /api/auth/google/callback
+- GET /api/i18n
+- GET /api/i18n/{language}
+- GET /manifest.webmanifest
+- GET /sw.js
+- GET /icon.svg
 - GET /api/capabilities
 - GET /api/categories
 - GET /api/repository
