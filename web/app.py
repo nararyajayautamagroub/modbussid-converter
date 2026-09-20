@@ -65,9 +65,6 @@ def icon():
     return FileResponse(ROOT / "icon.svg", media_type="image/svg+xml")
 
 
-@app.mount("/", StaticFiles(directory=ROOT, html=False), name="web-static")
-
-
 @app.get("/api/health", tags=["system"])
 def health():
     return {"status": "ok", "service": "game-mod-asset-lab", "version": app.version, "google_login": GOOGLE_CONFIGURED}
