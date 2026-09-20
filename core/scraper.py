@@ -11,7 +11,6 @@ from urllib.request import (
     HTTPRedirectHandler,
     Request,
     build_opener,
-    urlopen,
 )
 from urllib.robotparser import RobotFileParser
 from datetime import datetime, timezone
