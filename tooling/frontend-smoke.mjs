@@ -62,7 +62,7 @@ if (html.includes("onclick=") || /\sstyle="/i.test(html)) {
 if (!html.includes('PT. NARARYA JAYA UTAMA GROUB - All Right Reserved')) {
   throw new Error("Corporate footer is missing.");
 }
-if (!js.includes("const ACTIONS=") || !js.includes("repository_folders")) || !js.includes('document.addEventListener("click"')) {
+if (!js.includes("const ACTIONS=") || !js.includes("repository_folders") || !js.includes('document.addEventListener("click"')) {
   throw new Error("JavaScript action delegation is missing.");
 }
 
