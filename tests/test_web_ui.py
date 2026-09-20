@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-def test_v4_ui_has_auth_settings_and_pwa():
+def test_v42_ui_has_auth_settings_and_pwa():
     html = Path("web/index.html").read_text(encoding="utf-8")
     assert 'id="loggedOut"' in html
     assert 'id="loggedIn"' in html
@@ -13,5 +13,7 @@ def test_v4_ui_has_auth_settings_and_pwa():
     assert '/sw.js' in html
 
     sw = Path("web/sw.js").read_text(encoding="utf-8")
-    assert 'asset-lab-v4.1' in sw
+    assert 'game-mod-asset-lab-v4.2' in sw
+    assert 'data-i18n="logout_all"' in html
+    assert 'data-i18n="bussid_zip"' in html
     assert 'data-i18n="upload_inspect"' in html
