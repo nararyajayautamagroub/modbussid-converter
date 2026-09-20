@@ -1,4 +1,4 @@
-# Game Mod Asset Lab
+# Game Mod Asset Lab v3.0.0
 
 Web-based inspector, classifier, exporter, and download utility untuk **file/mod yang memang Anda miliki atau berwenang memprosesnya**.
 
@@ -38,7 +38,8 @@ Classifier memakai nama file berbasis token agar radio.png tidak salah dibaca se
 - Near-real-time repository tree dengan default branch, commit SHA, tanggal commit, dan filter prefix
 - Download asset Roblox publik melalui endpoint resmi Asset Delivery
 - Validasi URL Roblox sebelum download
-- GitHub Actions untuk compile dan test Python 3.10-3.13
+- Web scraper publik dengan parser HTML, metadata Open Graph, JSON-LD, heading, link, image, robots.txt, batas ukuran, timeout, anti-SSRF, dan same-host crawl
+- GitHub Actions untuk dependency check, static check, compile, dan test Python 3.10-3.13
 
 ## Endpoint utama
 
@@ -56,6 +57,8 @@ Classifier memakai nama file berbasis token agar radio.png tidak salah dibaca se
 - GET /api/sprite-sheet/inspect?path=...
 - GET /api/sprite-sheet/extract?path=...&columns=4&rows=4
 - GET /api/repository/tree?prefix=...
+- GET /api/scraper/fetch?url=...
+- GET /api/scraper/crawl?url=...&max_pages=...
 - GET /api/lights/{strobo|rotator|ledbar}
 - GET /api/lights/{strobo|rotator|ledbar}/download?platform=...
 
@@ -71,7 +74,7 @@ Project ini **tidak** membypass password, enkripsi, DRM, signature, private asse
 
 Untuk format game proprietary seperti beberapa format internal ETS2/BUSSID/Roblox, project hanya melaporkan metadata, mendeteksi container yang dikenali, atau memproses format yang didukung. Parser native penuh harus ditambahkan berdasarkan format, dokumentasi, atau sample yang sah.
 
-Exporter Roblox lampu saat ini menghasilkan **paket data animasi JSON**, bukan file native .rbxm/.rbxmx.
+Exporter Roblox lampu menghasilkan **JSON + script Lua Roblox Studio**. Output tersebut bukan file native .rbxm/.rbxmx.
 
 ## Jalankan
 
@@ -84,3 +87,13 @@ Buka http://127.0.0.1:8000.
 
     python -m compileall -q bussid ets2 roblox shared web tests
     python -m pytest -q -W error
+
+## Scraper
+
+Scraper berjalan pada host publik HTTP/HTTPS, memvalidasi DNS/IP publik, memeriksa robots.txt bila tersedia, membatasi response sampai 20 MB per request, timeout 60 detik maksimum, dan crawl hanya pada host yang sama. Ini ditujukan untuk data publik, bukan untuk melewati login, paywall, private resource, atau access control.
+
+### Contoh
+
+    /api/scraper/fetch?url=https%3A%2F%2Fexample.com
+    /api/scraper/crawl?url=https%3A%2F%2Fexample.com&max_pages=5
+
