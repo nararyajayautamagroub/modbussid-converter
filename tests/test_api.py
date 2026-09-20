@@ -21,7 +21,7 @@ def test_health():
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "ok"
-    assert data["version"] == "4.1.0"
+    assert data["version"] == "4.2.0"
 
 
 def test_template_types():
@@ -33,7 +33,10 @@ def test_template_types():
 def test_capabilities():
     response = request("/api/capabilities")
     assert response.status_code == 200
-    assert response.json()["repository_sync"] is True
+    data = response.json()
+    assert data["repository_sync"] is True
+    assert data["languages"] == 10
+    assert "profile" in data["settings"]
 
 
 def test_repository_catalog_contains_platforms():
