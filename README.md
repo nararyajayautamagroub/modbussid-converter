@@ -97,3 +97,9 @@ Scraper berjalan pada host publik HTTP/HTTPS, memvalidasi DNS/IP publik, memerik
     /api/scraper/fetch?url=https%3A%2F%2Fexample.com
     /api/scraper/crawl?url=https%3A%2F%2Fexample.com&max_pages=5
 
+
+## CLI scraper v3
+
+    python scripts/scraper.py https://example.com
+    python scripts/scraper.py https://example.com --crawl --max-pages 5
+    python scripts/scraper.py https://example.com --output reports/example.json
