@@ -143,6 +143,16 @@ def register(request: Request, payload: RegisterRequest, response: Response):
     _same_origin(request)
     init_db()
 
+    client_host = request.client.host if request.client else "unknown"
+    rate_key = f"register:ip:{client_host}"
+    retry_after = auth_rate_limited(rate_key)
+    if retry_after:
+        raise HTTPException(
+            status_code=429,
+            detail="Terlalu banyak percobaan pendaftaran. Coba lagi nanti.",
+            headers={"Retry-After": str(retry_after)},
+        )
+
     if payload.language not in SUPPORTED_LANGUAGES:
         raise HTTPException(status_code=400, detail="Bahasa tidak didukung.")
 
@@ -153,6 +163,7 @@ def register(request: Request, payload: RegisterRequest, response: Response):
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     if get_user_by_email(email):
+        record_auth_failure(rate_key)
         raise HTTPException(status_code=409, detail="Email sudah terdaftar.")
 
     try:
@@ -163,8 +174,10 @@ def register(request: Request, payload: RegisterRequest, response: Response):
             language=payload.language,
         )
     except ValueError as exc:
+        record_auth_failure(rate_key)
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
+    clear_auth_failures(rate_key)
     token = create_session(user_id)
     _set_session(response, token)
     user = get_user_by_id(user_id)
