@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from urllib.error import HTTPError, URLError
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse
@@ -96,7 +97,7 @@ def roblox_url(url: str):
         try:
             result = download_asset(url, target)
             data = target.read_bytes()
-        except Exception as exc:
+        except (HTTPError, URLError, OSError, ValueError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     output = GENERATED / f"roblox_{result['asset_id']}.bin"
