@@ -1,4 +1,4 @@
-from shared.scraper import PageParser, _validate_url
+from shared.scraper import PageParser, _validate_url, crawl_site
 from shared.version import APP_VERSION
 
 
@@ -52,3 +52,10 @@ def test_scraper_rejects_mismatched_ports():
         _validate_url("https://example.com:80/")
     with pytest.raises(ValueError):
         _validate_url("http://example.com:443/")
+
+
+def test_crawl_rejects_invalid_max_bytes():
+    import pytest
+
+    with pytest.raises(ValueError):
+        crawl_site("https://example.com/", max_bytes=0)
