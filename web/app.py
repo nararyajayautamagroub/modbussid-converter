@@ -20,6 +20,7 @@ from web.scraper_api import router as scraper_router
 from web.auth_api import GOOGLE_CONFIGURED, router as auth_router
 from shared.version import APP_VERSION, PRODUCT_NAME
 from web.i18n_api import router as i18n_router
+from web.gateway_api import router as gateway_router
 
 ROOT = Path(__file__).resolve().parent
 GENERATED = ROOT / "generated"
@@ -41,6 +42,7 @@ app.include_router(sprite_router)
 app.include_router(scraper_router)
 app.include_router(auth_router)
 app.include_router(i18n_router)
+app.include_router(gateway_router)
 
 
 @app.get("/", tags=["web"])
@@ -135,6 +137,9 @@ def download(light_type: str, platform: str = "roblox"):
     output = GENERATED / path.name
     output.write_bytes(data)
     return FileResponse(output, filename=output.name, media_type="application/zip")
+
+
+app.mount("/", StaticFiles(directory=ROOT, html=False), name="web-static")
 
 
 @app.middleware("http")
