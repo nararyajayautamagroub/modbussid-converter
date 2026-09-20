@@ -32,3 +32,5 @@ jobs:
         run: python -m ruff check . --select E9,F
       - name: Run tests
         run: python -m pytest -q -W error
+      - name: Runtime smoke test
+        run: python scripts/smoke.py
