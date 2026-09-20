@@ -1,7 +1,7 @@
 {
   "name": "Game Mod Asset Lab",
   "short_name": "Asset Lab",
-  "description": "Game Mod Asset Lab v4.1.0.0",
+  "description": "Game Mod Asset Lab v4.1.0",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
