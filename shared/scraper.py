@@ -330,10 +330,13 @@ def crawl_site(
     *,
     max_pages: int = DEFAULT_MAX_PAGES,
     max_links_per_page: int = 50,
+    max_bytes: int = DEFAULT_MAX_BYTES,
     timeout: int = DEFAULT_TIMEOUT,
 ) -> dict:
     if not 1 <= max_pages <= 25:
         raise ValueError("max_pages harus 1-25.")
+    if not 1 <= max_bytes <= 20 * 1024 * 1024:
+        raise ValueError("max_bytes harus 1 MB-20 MB.")
     start = _validate_url(start_url)
     start_host = (urlparse(start).hostname or "").lower()
 
@@ -354,6 +357,7 @@ def crawl_site(
         try:
             page = scrape_page(
                 current,
+                max_bytes=max_bytes,
                 max_links=max_links_per_page,
                 timeout=timeout,
             )
