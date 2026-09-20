@@ -2,7 +2,7 @@ const FALLBACK_LANGS=[
   ["id","Bahasa Indonesia"],["en","English"],["ms","Bahasa Melayu"],["ar","العربية"],["ja","日本語"],
   ["ko","한국어"],["zh","简体中文"],["es","Español"],["pt","Português"],["fr","Français"]
 ];
-let uploadedPath="", currentUser=null, translations={}, gateway=null;
+let uploadedPath="", currentUser=null, translations={}, gateway=null, capabilities=null;
 
 const I18N_FALLBACK={
   id:{menu:"Menu utama",account:"Akun",login:"Login",register:"Register",logout:"Logout",settings:"Pengaturan",language:"Bahasa",theme:"Tema",notifications:"Notifikasi",save:"Simpan",email:"Email",password:"Password",name:"Nama",login_google:"Login dengan Google",change_password:"Ganti password",current_password:"Password lama",new_password:"Password baru",create_account:"Buat akun",logged_in_as:"Login sebagai",light:"Terang",dark:"Gelap",system:"Sistem",language_count:"10 bahasa tersedia"},
@@ -18,7 +18,7 @@ const I18N_FALLBACK={
 };
 
 function byId(id){return document.getElementById(id)}
-function setText(id,value){byId(id).textContent=value}
+function setText(id,value){const el=byId(id);if(el)el.textContent=value}
 async function api(url,options={}){
   const controller=new AbortController();
   const timeoutMs=Number(options.timeoutMs||30000);
@@ -235,6 +235,27 @@ async function extractSpriteSheet(){
 for(const t of ["strobo","rotator","ledbar"]){
   const card=document.createElement("div");card.className="card";card.innerHTML="<h3>"+t.toUpperCase()+'</h3><div class="row"><a data-i18n="bussid_zip" href="/api/lights/'+t+'/download?platform=bussid">BUSSID ZIP</a><a data-i18n="roblox_zip" href="/api/lights/'+t+'/download?platform=roblox">Roblox ZIP</a><a data-i18n="json_preview" href="/api/lights/'+t+'">JSON Preview</a></div>';byId("lightsGrid").append(card)
 }
+const ACTIONS={
+  loginUser,googleLogin,registerUser,logoutUser,logoutAll,saveSettings,changePassword,
+  uploadAsset,inspectUploaded,exportSelected,classifyTemplate,loadRepository,loadTree,
+  scrapePage,crawlSite,getRoblox,extractSpriteSheet
+};
+document.addEventListener("click",async(event)=>{
+  const target=event.target.closest("[data-action]");
+  if(!target)return;
+  const action=target.dataset.action;
+  const handler=ACTIONS[action];
+  if(typeof handler!=="function")return;
+  if(target.dataset.busy==="1")return;
+  target.dataset.busy="1";
+  target.classList.add("loading");
+  target.setAttribute("aria-busy","true");
+  try{await handler()}finally{
+    target.dataset.busy="0";
+    target.classList.remove("loading");
+    target.removeAttribute("aria-busy");
+  }
+});
 const menuButton=byId("menuButton"),menu=byId("menu");
 menuButton.addEventListener("click",()=>{const open=menu.classList.toggle("open");menuButton.setAttribute("aria-expanded",String(open))});
 menu.querySelectorAll("a").forEach(link=>link.addEventListener("click",()=>menu.classList.remove("open")));
