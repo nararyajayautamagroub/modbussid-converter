@@ -1,4 +1,4 @@
-# Game Mod Asset Lab v4.1.1.0
+# Game Mod Asset Lab v4.1.0
 
 Web-based inspector, classifier, exporter, scraper, account system, dan download utility untuk **file/mod yang memang Anda miliki atau berwenang memprosesnya**.
 
