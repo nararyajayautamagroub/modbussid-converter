@@ -91,6 +91,28 @@ def test_auth_status_and_i18n():
 
             health = await client.get("/api/health")
             assert health.status_code == 200
-            assert health.json()["version"] == "4.0.0"
+            assert health.json()["version"] == "4.1.0"
+            feature_i18n = await client.get("/api/i18n/en")
+            assert feature_i18n.json()["translations"]["asset_inspector_exporter"] == "Asset Inspector & Exporter"
 
     asyncio.run(run())
+
+
+def test_auth_rate_limit_helpers(monkeypatch, tmp_path: Path):
+    monkeypatch.setenv("GAME_MOD_DB", str(tmp_path / "rate.db"))
+    from shared.auth_db import (
+        AUTH_RATE_MAX_FAILURES,
+        auth_rate_limited,
+        clear_auth_failures,
+        init_db,
+        record_auth_failure,
+    )
+
+    init_db()
+    rate_key = "test:login-rate"
+    clear_auth_failures(rate_key)
+    for _ in range(AUTH_RATE_MAX_FAILURES):
+        record_auth_failure(rate_key)
+    assert auth_rate_limited(rate_key) > 0
+    clear_auth_failures(rate_key)
+    assert auth_rate_limited(rate_key) == 0
