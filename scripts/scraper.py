@@ -37,6 +37,7 @@ def main() -> int:
             args.url,
             max_pages=args.max_pages,
             max_links_per_page=args.max_links,
+            max_bytes=args.max_bytes,
             timeout=args.timeout,
         )
     else:
