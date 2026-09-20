@@ -19,7 +19,9 @@ def request(path: str) -> httpx.Response:
 def test_health():
     response = request("/api/health")
     assert response.status_code == 200
-    assert response.json()["status"] == "ok"
+    data = response.json()
+    assert data["status"] == "ok"
+    assert data["version"] == "3.0.0"
 
 
 def test_template_types():
@@ -45,4 +47,9 @@ def test_repository_catalog_contains_platforms():
 
 def test_path_security_blocks_outside_files():
     response = request("/api/templates/classify?path=/etc/passwd")
+    assert response.status_code == 400
+
+
+def test_scraper_route_rejects_local_target():
+    response = request("/api/scraper/fetch?url=http%3A%2F%2F127.0.0.1%3A8000%2F")
     assert response.status_code == 400
