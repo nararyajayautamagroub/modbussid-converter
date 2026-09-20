@@ -16,7 +16,7 @@ from shared.version import APP_VERSION
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Game Mod Asset Lab v3 scraper"
+        description="Game Mod Asset Lab v4.1 scraper"
     )
     parser.add_argument("url", help="URL HTTP/HTTPS publik")
     parser.add_argument(
