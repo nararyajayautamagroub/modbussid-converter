@@ -44,8 +44,8 @@
         <div class="row">
           <input id="loginEmail" type="email" autocomplete="email" data-i18n-placeholder="email" placeholder="Email">
           <input id="loginPassword" type="password" autocomplete="current-password" data-i18n-placeholder="password" placeholder="Password">
-          <button class="action" onclick="loginUser()" data-i18n="login">Login</button>
-          <button class="secondary" id="googleButton" onclick="googleLogin()" data-i18n="login_google">Login dengan Google</button>
+          <button class="action" data-action="loginUser" data-i18n="login">Login</button>
+          <button class="secondary" id="googleButton" data-action="googleLogin" data-i18n="login_google">Login dengan Google</button>
         </div>
         <div id="loginResult" class="status"></div>
       </div>
@@ -56,7 +56,7 @@
           <input id="registerEmail" type="email" autocomplete="email" data-i18n-placeholder="email" placeholder="Email">
           <input id="registerPassword" type="password" autocomplete="new-password" data-i18n-placeholder="password" placeholder="Password">
           <select id="registerLanguage" aria-label="Bahasa"></select>
-          <button class="action" onclick="registerUser()" data-i18n="create_account">Buat akun</button>
+          <button class="action" data-action="registerUser" data-i18n="create_account">Buat akun</button>
         </div>
         <div class="status" data-i18n="password_hint">Password minimal 8 karakter, harus memiliki huruf besar, kecil, dan angka.</div>
         <div id="registerResult" class="status"></div>
@@ -66,11 +66,11 @@
     <div id="loggedIn" class="auth-card hidden">
       <div class="row">
         <img id="avatar" class="avatar" alt="">
-        <div style="flex:1"><strong id="accountName"></strong><div class="muted" id="accountEmail"></div></div>
-        <button class="secondary" onclick="logoutUser()" data-i18n="logout">Logout</button>
-        <button class="danger" onclick="logoutAll()" data-i18n="logout_all">Logout Semua</button>
+        <div class="grow"><strong id="accountName"></strong><div class="muted" id="accountEmail"></div></div>
+        <button class="secondary" data-action="logoutUser" data-i18n="logout">Logout</button>
+        <button class="danger" data-action="logoutAll" data-i18n="logout_all">Logout Semua</button>
       </div>
-      <div id="accountStatus" class="status" style="margin-top:10px"></div>
+      <div id="accountStatus" class="status" class="status spaced-top"></div>
     </div>
   </section>
 
@@ -99,8 +99,8 @@
         <label class="switch"><input id="settingsNotifications" type="checkbox"> Aktif</label>
       </div>
     </div>
-    <div class="row" style="margin-top:12px">
-      <button class="action" onclick="saveSettings()" data-i18n="save">Simpan</button>
+    <div class="row" class="row spaced-top">
+      <button class="action" data-action="saveSettings" data-i18n="save">Simpan</button>
       <span id="settingsResult" class="status" data-i18n="local_settings_hint">Perubahan lokal bisa dipakai tanpa login; sinkronisasi akun memerlukan login.</span>
     </div>
   </section>
@@ -110,7 +110,7 @@
     <div class="row">
       <input id="currentPassword" type="password" autocomplete="current-password" data-i18n-placeholder="current_password" placeholder="Password lama">
       <input id="newPassword" type="password" autocomplete="new-password" data-i18n-placeholder="new_password" placeholder="Password baru">
-      <button class="action" onclick="changePassword()" data-i18n="save">Simpan</button>
+      <button class="action" data-action="changePassword" data-i18n="save">Simpan</button>
     </div>
     <div id="passwordResult" class="status"></div>
   </section>
@@ -119,13 +119,13 @@
     <h2 data-i18n="upload_inspect">Upload & Inspect</h2>
     <div class="row">
       <input id="file" type="file" aria-label="Pilih file asset">
-      <button class="action" onclick="uploadAsset()" data-i18n="upload">Upload</button>
-      <button class="secondary" onclick="inspectUploaded()" data-i18n="inspect">Inspect</button>
+      <button class="action" data-action="uploadAsset" data-i18n="upload">Upload</button>
+      <button class="secondary" data-action="inspectUploaded" data-i18n="inspect">Inspect</button>
     </div>
     <pre id="uploadResult" data-i18n="not_file">Belum ada file.</pre>
     <div id="entries" class="entry-list"></div>
     <div class="row">
-      <button class="action" onclick="exportSelected()" data-i18n="export_asset">Export Asset</button>
+      <button class="action" data-action="exportSelected" data-i18n="export_asset">Export Asset</button>
       <span class="status" data-i18n="archive_help">Untuk archive, centang entry yang ingin diekspor. Tanpa pilihan berarti export sumber penuh.</span>
     </div>
     <pre id="exportResult"></pre>
@@ -138,9 +138,9 @@
       <div class="card"><b>Texture</b><br><small data-i18n="texture_general">Texture umum</small></div>
       <div class="card"><b>Kaca/XOR</b><br><small data-i18n="glass_template">Template kaca / glass</small></div>
     </div>
-    <div class="row" style="margin-top:12px">
-      <input id="templatePath" placeholder="uploads/nama-file.png" style="flex:1">
-      <button class="action" onclick="classifyTemplate()" data-i18n="classify">Classify</button>
+    <div class="row" class="row spaced-top">
+      <input id="templatePath" placeholder="uploads/nama-file.png" class="grow">
+      <button class="action" data-action="classifyTemplate" data-i18n="classify">Classify</button>
     </div>
     <pre id="templateResult"></pre>
   </section>
@@ -148,8 +148,8 @@
   <section id="repository">
     <h2 data-i18n="repository">Repository Terhubung</h2>
     <div class="row">
-      <button class="action" onclick="loadRepository()" data-i18n="refresh_data">Refresh Data</button>
-      <button class="secondary" onclick="loadTree()" data-i18n="refresh_tree">Refresh Tree</button>
+      <button class="action" data-action="loadRepository" data-i18n="refresh_data">Refresh Data</button>
+      <button class="secondary" data-action="loadTree" data-i18n="refresh_tree">Refresh Tree</button>
     </div>
     <pre id="repositoryResult" data-i18n="not_loaded">Belum dimuat.</pre>
   </section>
@@ -158,10 +158,10 @@
     <h2 data-i18n="scraper">Web Scraper</h2>
     <p class="status" data-i18n="scraper_desc">Metadata publik, Open Graph, JSON-LD, heading, link, image, robots.txt, anti-SSRF, dan crawl same-host.</p>
     <div class="row">
-      <input id="scraperUrl" type="url" style="flex:1" placeholder="https://example.com/">
-      <input id="scraperPages" type="number" min="1" max="25" value="5" style="width:110px">
-      <button class="action" onclick="scrapePage()" data-i18n="scrape">Scrape</button>
-      <button class="secondary" onclick="crawlSite()" data-i18n="crawl">Crawl</button>
+      <input id="scraperUrl" type="url" class="grow" placeholder="https://example.com/">
+      <input id="scraperPages" type="number" min="1" max="25" value="5" class="compact-input">
+      <button class="action" data-action="scrapePage" data-i18n="scrape">Scrape</button>
+      <button class="secondary" data-action="crawlSite" data-i18n="crawl">Crawl</button>
     </div>
     <pre id="scraperResult" data-i18n="result_empty">Belum ada hasil.</pre>
   </section>
@@ -169,8 +169,8 @@
   <section id="roblox">
     <h2 data-i18n="roblox_asset">Roblox URL Asset</h2>
     <div class="row">
-      <input id="url" style="flex:1" placeholder="https://www.roblox.com/...">
-      <button class="action" onclick="getRoblox()" data-i18n="download_asset">Download Asset</button>
+      <input id="url" class="grow" placeholder="https://www.roblox.com/...">
+      <button class="action" data-action="getRoblox" data-i18n="download_asset">Download Asset</button>
     </div>
     <pre id="result"></pre>
   </section>
@@ -179,9 +179,9 @@
     <h2 data-i18n="sprite_sheet">Sprite Sheet</h2>
     <p class="status" data-i18n="sprite_desc">Upload image sprite sheet, lalu pecah menjadi frame ZIP berdasarkan grid.</p>
     <div class="row">
-      <input id="spriteColumns" type="number" min="1" max="64" value="4" style="width:100px">
-      <input id="spriteRows" type="number" min="1" max="64" value="4" style="width:100px">
-      <button class="action" onclick="extractSpriteSheet()" data-i18n="extract_frames">Extract Frames</button>
+      <input id="spriteColumns" type="number" min="1" max="64" value="4" class="compact-input">
+      <input id="spriteRows" type="number" min="1" max="64" value="4" class="compact-input">
+      <button class="action" data-action="extractSpriteSheet" data-i18n="extract_frames">Extract Frames</button>
     </div>
     <pre id="spriteResult" data-i18n="result_empty"></pre>
   </section>
@@ -191,7 +191,10 @@
     <div id="lightsGrid" class="grid"></div>
   </section>
 
-  <div class="footer">Game Mod Asset Lab v4.2 • <span id="footerVersion">4.2.0</span> • responsive + PWA</div>
+  <footer class="footer" id="siteFooter">
+  <strong>PT. NARARYA JAYA UTAMA GROUB - All Right Reserved</strong>
+  <span>Game Mod Asset Lab v4.2.0 • Responsive • PWA</span>
+</footer>
 </main>
 
 <script defer src="/app.js"></script>
