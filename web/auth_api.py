@@ -285,7 +285,7 @@ async def google_start(request: Request):
 
 
 @router.get("/auth/google/callback", name="google_callback")
-async def google_callback(request: Request, response: Response):
+async def google_callback(request: Request):
     if not GOOGLE_CONFIGURED:
         raise HTTPException(status_code=503, detail="Google Login belum dikonfigurasi.")
 
@@ -305,6 +305,8 @@ async def google_callback(request: Request, response: Response):
     name = str(userinfo.get("name") or email.split("@", 1)[0]).strip()
     avatar = str(userinfo.get("picture") or "").strip() or None
     verified = bool(userinfo.get("email_verified"))
+    if not verified:
+        raise HTTPException(status_code=403, detail="Google account email belum terverifikasi.")
 
     if not google_sub or not email:
         raise HTTPException(
