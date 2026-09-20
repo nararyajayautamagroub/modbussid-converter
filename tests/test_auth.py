@@ -34,6 +34,13 @@ def test_local_register_login_logout(monkeypatch, tmp_path: Path):
             assert me.status_code == 200
             assert me.json()["language"] == "en"
 
+            profile = await client.put(
+                "/api/auth/profile",
+                json={"name": "Updated User"},
+            )
+            assert profile.status_code == 200
+            assert profile.json()["user"]["name"] == "Updated User"
+
             settings = await client.put(
                 "/api/auth/settings",
                 json={
