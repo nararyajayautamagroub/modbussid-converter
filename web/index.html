@@ -485,7 +485,7 @@ async function extractSpriteSheet(){
   result.innerHTML='<a class="badge" href="/api/sprite-sheet/extract?path='+encodeURIComponent(path)+'&columns='+columns+'&rows='+rows+'">Download frame ZIP</a>';
 }
 for(const t of ["strobo","rotator","ledbar"]){
-  const card=document.createElement("div");card.className="card";card.innerHTML="<h3>"+t.toUpperCase()+'</h3><div class="row"><a href="/api/lights/'+t+'/download?platform=bussid">BUSSID ZIP</a><a href="/api/lights/'+t+'/download?platform=roblox">Roblox ZIP</a><a href="/api/lights/'+t+'">JSON Preview</a></div>';byId("lightsGrid").append(card)
+  const card=document.createElement("div");card.className="card";card.innerHTML="<h3>"+t.toUpperCase()+'</h3><div class="row"><a data-i18n="bussid_zip" href="/api/lights/'+t+'/download?platform=bussid">BUSSID ZIP</a><a data-i18n="roblox_zip" href="/api/lights/'+t+'/download?platform=roblox">Roblox ZIP</a><a data-i18n="json_preview" href="/api/lights/'+t+'">JSON Preview</a></div>';byId("lightsGrid").append(card)
 }
 const menuButton=byId("menuButton"),menu=byId("menu");
 menuButton.addEventListener("click",()=>{const open=menu.classList.toggle("open");menuButton.setAttribute("aria-expanded",String(open))});
