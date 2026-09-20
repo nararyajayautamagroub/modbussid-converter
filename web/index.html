@@ -148,6 +148,10 @@ pre{white-space:pre-wrap;overflow:auto;background:var(--soft);border:1px solid v
     <h2 data-i18n="settings">Pengaturan</h2>
     <div class="grid">
       <div class="card">
+        <strong data-i18n="name">Nama</strong>
+        <input id="settingsName" type="text" autocomplete="name" data-i18n-placeholder="name" placeholder="Nama">
+      </div>
+      <div class="card">
         <strong data-i18n="language">Bahasa</strong>
         <select id="settingsLanguage" aria-label="Bahasa"></select>
         <div class="status" data-i18n="language_count">10 bahasa tersedia</div>
@@ -356,6 +360,7 @@ async function loadMe(){
     byId("accountEmail").textContent=currentUser.email;
     byId("accountStatus").textContent=(translations.logged_in_as||"Login sebagai")+" "+currentUser.name;
     byId("avatar").src=currentUser.avatar_url||"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Crect width='44' height='44' rx='22' fill='%2316a34a'/%3E%3Ctext x='22' y='28' text-anchor='middle' font-size='18' fill='white'%3E%3F%3C/text%3E%3C/svg%3E";
+    byId("settingsName").value=currentUser.name||"";
     byId("settingsLanguage").value=currentUser.language||"id";
     byId("settingsTheme").value=currentUser.theme||"light";
     byId("settingsNotifications").checked=!!currentUser.notifications;
@@ -398,7 +403,14 @@ async function saveSettings(){
   if(!currentUser){setText("settingsResult","Pengaturan lokal tersimpan.");return}
   try{
     const data=await api("/api/auth/settings",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({language,theme,notifications})});
-    currentUser=data.user;setText("settingsResult",translations.save+" ✓");await loadTranslations(language);applyTranslations(language);
+    currentUser=data.user;
+    const profile=byId("settingsName").value.trim();
+    if(profile && profile!==currentUser.name){
+      const profileData=await api("/api/auth/profile",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:profile})});
+      currentUser=profileData.user;
+    }
+    setText("settingsResult",translations.save+" ✓");await loadTranslations(language);applyTranslations(language);
+    byId("accountName").textContent=currentUser.name;
   }catch(error){setText("settingsResult",error.message)}
 }
 async function changePassword(){
