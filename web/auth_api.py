@@ -20,6 +20,9 @@ from shared.auth_db import (
     hash_password,
     init_db,
     normalize_email,
+    auth_rate_limited,
+    clear_auth_failures,
+    record_auth_failure,
     update_login,
     update_user,
     verify_password,
@@ -179,19 +182,37 @@ def login(request: Request, payload: Credentials, response: Response):
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
+    client_host = request.client.host if request.client else "unknown"
+    rate_keys = (
+        f"login:ip:{client_host}",
+        f"login:email:{email}",
+    )
+    retry_after = max(auth_rate_limited(key) for key in rate_keys)
+    if retry_after:
+        raise HTTPException(
+            status_code=429,
+            detail="Terlalu banyak percobaan login. Coba lagi nanti.",
+            headers={"Retry-After": str(retry_after)},
+        )
+
     user = get_user_by_email(email)
-    if (
-        user is None
-        or not user.get("password_hash")
-        or not user.get("password_salt")
-        or not verify_password(
+    valid_password = (
+        user is not None
+        and bool(user.get("password_hash"))
+        and bool(user.get("password_salt"))
+        and verify_password(
             payload.password,
             user["password_salt"],
             user["password_hash"],
         )
-    ):
+    )
+    if not valid_password:
+        for key in rate_keys:
+            record_auth_failure(key)
         raise HTTPException(status_code=401, detail="Email atau password salah.")
 
+    for key in rate_keys:
+        clear_auth_failures(key)
     update_login(user["id"])
     token = create_session(user["id"])
     _set_session(response, token)
