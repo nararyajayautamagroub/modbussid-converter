@@ -53,11 +53,17 @@ if (!css.includes("@media (max-width:640px)")) {
 if (!css.includes("@media (prefers-reduced-motion:reduce)")) {
   throw new Error("Reduced-motion support is missing.");
 }
-if (html.includes("<style>")) {
-  throw new Error("Inline CSS should not be used in rebuilt frontend.");
+if (/<style\\b/i.test(html) || /<script\\s*>/i.test(html)) {
+  throw new Error("Inline CSS/JavaScript should not be used in rebuilt frontend.");
 }
-if (html.includes("<script>")) {
-  throw new Error("Inline JavaScript should not be used in rebuilt frontend.");
+if (html.includes("onclick=") || /\\sstyle="/i.test(html)) {
+  throw new Error("Inline event handlers/style attributes should not be used in rebuilt frontend.");
+}
+if (!html.includes('PT. NARARYA JAYA UTAMA GROUB - All Right Reserved')) {
+  throw new Error("Corporate footer is missing.");
+}
+if (!js.includes("const ACTIONS=") || !js.includes('document.addEventListener("click"')) {
+  throw new Error("JavaScript action delegation is missing.");
 }
 
 console.log("FRONTEND SMOKE PASSED");
