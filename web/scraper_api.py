@@ -32,6 +32,7 @@ def crawl(
     url: str,
     max_pages: int = 10,
     max_links_per_page: int = 50,
+    max_bytes: int = 5 * 1024 * 1024,
     timeout: int = 10,
 ):
     try:
@@ -39,6 +40,7 @@ def crawl(
             url,
             max_pages=max_pages,
             max_links_per_page=max_links_per_page,
+            max_bytes=max_bytes,
             timeout=timeout,
         )
     except PermissionError as exc:
