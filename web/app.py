@@ -3,6 +3,10 @@ from tempfile import TemporaryDirectory
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
+from starlette.middleware.sessions import SessionMiddleware
+import os
+
+from shared.auth_db import init_db
 
 from shared.light_animation import VALID_LIGHT_TYPES, build_animation, to_dict
 from shared.package_export import export_light_package
@@ -11,6 +15,7 @@ from web.catalog import repository_catalog, repository_tree
 from web.template_api import router as template_router
 from web.sprite_api import router as sprite_router
 from web.scraper_api import router as scraper_router
+from web.auth_api import router as auth_router
 from shared.version import APP_VERSION, PRODUCT_NAME
 
 ROOT = Path(__file__).resolve().parent
@@ -18,15 +23,35 @@ GENERATED = ROOT / "generated"
 GENERATED.mkdir(exist_ok=True)
 
 app = FastAPI(title=PRODUCT_NAME, version=APP_VERSION)
+init_db()
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=os.getenv("SESSION_SECRET", "dev-only-change-this-secret"),
+    session_cookie="oauth_session",
+    max_age=900,
+    same_site="lax",
+    https_only=os.getenv("COOKIE_SECURE", "0") == "1",
+)
 app.include_router(asset_router)
 app.include_router(template_router)
 app.include_router(sprite_router)
 app.include_router(scraper_router)
+app.include_router(auth_router)
 
 
 @app.get("/", tags=["web"])
 def index():
     return FileResponse(ROOT / "index.html")
+
+
+@app.get("/manifest.webmanifest", tags=["pwa"])
+def manifest():
+    return FileResponse(ROOT / "manifest.webmanifest", media_type="application/manifest+json")
+
+
+@app.get("/sw.js", tags=["pwa"])
+def service_worker():
+    return FileResponse(ROOT / "sw.js", media_type="application/javascript")
 
 
 @app.get("/api/health", tags=["system"])
