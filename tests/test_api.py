@@ -53,3 +53,18 @@ def test_path_security_blocks_outside_files():
 def test_scraper_route_rejects_local_target():
     response = request("/api/scraper/fetch?url=http%3A%2F%2F127.0.0.1%3A8000%2F")
     assert response.status_code == 400
+
+
+def test_security_headers_and_pwa():
+    response = request("/api/health")
+    assert response.headers["X-Content-Type-Options"] == "nosniff"
+    assert response.headers["X-Frame-Options"] == "DENY"
+    assert response.headers["Referrer-Policy"] == "strict-origin-when-cross-origin"
+
+    manifest = request("/manifest.webmanifest")
+    assert manifest.status_code == 200
+    assert manifest.headers["content-type"].startswith("application/manifest+json")
+
+    worker = request("/sw.js")
+    assert worker.status_code == 200
+    assert worker.headers["content-type"].startswith("application/javascript")
