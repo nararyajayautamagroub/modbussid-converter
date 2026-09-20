@@ -1,6 +1,6 @@
-# Game Mod Asset Lab v3.0.0
+# Game Mod Asset Lab v4.0.0
 
-Web-based inspector, classifier, exporter, and download utility untuk **file/mod yang memang Anda miliki atau berwenang memprosesnya**.
+Web-based inspector, classifier, exporter, scraper, account system, dan download utility untuk **file/mod yang memang Anda miliki atau berwenang memprosesnya**.
 
 ## Alur utama
 
@@ -109,3 +109,34 @@ Scraper berjalan pada host publik HTTP/HTTPS, memvalidasi DNS/IP publik, memerik
     python scripts/check.py
 
 Perintah ini menjalankan pip check, compileall, Ruff (E9/F), dan pytest dengan warning diperlakukan sebagai error.
+
+## Authentication & Account
+
+Fitur v4:
+- Register dengan email/password
+- Login/logout
+- Logout semua session
+- Ganti password
+- Session database SQLite
+- Google Login via OpenID Connect
+- Pengaturan bahasa, tema, dan notifikasi
+- 10 bahasa: Indonesia, English, Melayu, Arabic, Japanese, Korean, Chinese, Spanish, Portuguese, French
+
+Google Login tidak mengaktifkan credential secara otomatis. Simpan credential di environment, jangan di source code:
+
+    GOOGLE_CLIENT_ID=...
+    GOOGLE_CLIENT_SECRET=...
+    GOOGLE_REDIRECT_URI=https://domain-anda.example/api/auth/google/callback
+
+Di Google Cloud Console, gunakan OAuth Client tipe **Web application** dan daftarkan redirect URI yang sama persis dengan `GOOGLE_REDIRECT_URI`.
+
+Untuk deployment HTTPS:
+
+    COOKIE_SECURE=1
+    SESSION_SECRET=<random-secret-panjang>
+
+Tanpa Google credential, tombol Google Login tampil tetapi disabled. Register/login lokal tetap bekerja.
+
+## PWA & All Device Support
+
+Website menggunakan layout responsive untuk mobile, tablet, desktop, viewport safe-area, hamburger menu, dan installable PWA. Service worker tidak menyimpan response `/api/*` agar data akun, scraper, dan asset tidak masuk cache publik.
